@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class JamTeramaiChart extends LineChartWidget
 {
-    protected static ?string $heading = 'Analisis Jam Teramai (Bulan Ini)';
+    protected static ?string $heading = 'Analisis Jam Teramai';
     protected static ?int $sort = 3;
     
     // Polling setiap 60 detik
@@ -20,6 +20,9 @@ class JamTeramaiChart extends LineChartWidget
     
     // 1. MEMBUAT GRAFIK FULL KE SAMPING
     protected int | string | array $columnSpan = 'full';
+    
+    // Filter untuk memilih periode
+    public ?string $filter = 'month';
 
     // 2. MEMBATASI TINGGI GRAFIK AGAR TIDAK JAUH SCROLL (250px)
     protected function getMaxHeight(): ?string
@@ -29,16 +32,31 @@ class JamTeramaiChart extends LineChartWidget
 
     protected function getData(): array
     {
-        // Cache selama 5 menit
-        return cache()->remember('chart_jam_teramai_bulan_' . now()->format('Y-m'), 300, function () {
-            $currentMonth = Carbon::now('Asia/Makassar');
-            $startOfMonth = $currentMonth->copy()->startOfMonth();
-            $endOfMonth = $currentMonth->copy()->endOfMonth();
+        $filter = $this->filter;
+        
+        // Cache berdasarkan filter
+        return cache()->remember('chart_jam_teramai_' . $filter, 300, function () use ($filter) {
+            $now = Carbon::now('Asia/Makassar');
             
-            // Mengambil data jumlah orang per jam untuk bulan ini
-            $data = Attendance::select(DB::raw('HOUR(created_at) as hour'), DB::raw('count(*) as total'))
-                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
-                ->groupBy('hour')
+            // Query berdasarkan filter
+            $query = Attendance::select(DB::raw('HOUR(created_at) as hour'), DB::raw('count(*) as total'));
+            
+            if ($filter === 'month') {
+                // Data bulan ini saja
+                $startOfMonth = $now->copy()->startOfMonth();
+                $endOfMonth = $now->copy()->endOfMonth();
+                $query->whereBetween('created_at', [$startOfMonth, $endOfMonth]);
+                $label = 'Bulan ' . $now->translatedFormat('F Y');
+            } elseif ($filter === 'year') {
+                // Data tahun ini saja
+                $query->whereYear('created_at', $now->year);
+                $label = 'Tahun ' . $now->year;
+            } else {
+                // Semua data
+                $label = 'Semua Waktu';
+            }
+            
+            $data = $query->groupBy('hour')
                 ->orderBy('hour')
                 ->pluck('total', 'hour')
                 ->all();
@@ -54,17 +72,26 @@ class JamTeramaiChart extends LineChartWidget
             return [
                 'datasets' => [
                     [
-                        'label' => 'Total Member Latihan (Bulan ' . $currentMonth->translatedFormat('F Y') . ')',
+                        'label' => 'Total Member Latihan (' . $label . ')',
                         'data' => $values,
-                        'borderColor' => '#3b82f6', // Warna Biru
+                        'borderColor' => '#3b82f6',
                         'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
                         'fill' => true,
-                        'tension' => 0.4, // Membuat grafik melengkung halus agar estetik
+                        'tension' => 0.4,
                     ],
                 ],
                 'labels' => $labels,
             ];
         });
+    }
+    
+    protected function getFilters(): ?array
+    {
+        return [
+            'month' => 'Bulan Ini',
+            'year' => 'Tahun Ini',
+            'all' => 'Semua Waktu',
+        ];
     }
 
     // 3. PENGATURAN TAMBAHAN AGAR GRAFIK LEBIH CEPER
