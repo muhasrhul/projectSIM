@@ -17,7 +17,7 @@ use Illuminate\Support\HtmlString;
 class ExpiredMembers extends BaseWidget
 {
     protected static ?string $heading = '⚠️ Member Habis Masa Aktif (Jatuh Tempo)';
-    protected static ?int $sort = 6; 
+    protected static ?int $sort = 8; 
     protected int | string | array $columnSpan = 'full';
     
     // Polling setiap 10 detik untuk update real-time
