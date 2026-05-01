@@ -48,7 +48,8 @@ class AppServiceProvider extends ServiceProvider
                     ->url(route('backup-database'))
                     ->icon('heroicon-o-database')
                     ->group('Sistem')
-                    ->sort(10),
+                    ->sort(10)
+                    ->visible(fn () => auth()->check() && auth()->user()->isSuperAdmin()), // Hanya Super Admin
             ]);
 
             // 2. ATUR URUTAN GRUP NAVIGASI

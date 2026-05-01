@@ -17,6 +17,12 @@ class IncomeChart extends LineChartWidget
     // Lazy load widget
     protected static bool $isLazy = true;
 
+    // PERMISSION: Hanya Super Admin yang bisa lihat widget ini
+    public static function canView(): bool
+    {
+        return auth()->user()->isSuperAdmin();
+    }
+
     // 1. MEMBUAT GRAFIK FULL KE SAMPING
     protected int | string | array $columnSpan = 'full';
     

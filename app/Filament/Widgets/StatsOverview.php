@@ -20,6 +20,12 @@ class StatsOverview extends BaseWidget
     // Set kolom menjadi 4 untuk layout yang lebih rapi
     protected int | string | array $columnSpan = 'full';
     
+    // PERMISSION: Hanya Super Admin yang bisa lihat widget ini
+    public static function canView(): bool
+    {
+        return auth()->user()->isSuperAdmin();
+    }
+    
     protected function getColumns(): int
     {
         return 4; // 4 kolom per baris (seperti semula)

@@ -17,6 +17,12 @@ class MetodePembayaranChart extends ChartWidget
     // Lazy load widget
     protected static bool $isLazy = true;
     
+    // PERMISSION: Hanya Super Admin yang bisa lihat widget ini
+    public static function canView(): bool
+    {
+        return auth()->user()->isSuperAdmin();
+    }
+    
     // Setengah lebar (2 kolom) - sejajar dengan PerbandinganPaketChart
     protected int | string | array $columnSpan = 1;
     

@@ -178,6 +178,11 @@ Route::middleware(['auth:web'])->group(function () {
     
     // 4. LAPORAN KEUANGAN MEMBER
     Route::get('/cetak-laporan', function (Request $request) {
+    // PERMISSION: Hanya Super Admin yang bisa akses
+    if (!auth()->user()->isSuperAdmin()) {
+        abort(403, 'Unauthorized action.');
+    }
+    
     // FILTER: Hanya transaksi member reguler (bukan kasir cepat)
     $query = Transaction::with('member')
         ->where(function (Builder $query) {
@@ -331,6 +336,11 @@ Route::middleware(['auth:web'])->group(function () {
 
 // 4.1 LAPORAN KEUANGAN KASIR CEPAT
 Route::get('/cetak-laporan-kasir', function (Request $request) {
+    // PERMISSION: Hanya Super Admin yang bisa akses
+    if (!auth()->user()->isSuperAdmin()) {
+        abort(403, 'Unauthorized action.');
+    }
+    
     $query = \App\Models\QuickTransaction::query();
     
     // FILTER TAMBAHAN DARI TABEL
@@ -439,6 +449,11 @@ Route::get('/cetak-laporan-kasir', function (Request $request) {
 
 // 4.2 LAPORAN PENGELUARAN
 Route::get('/cetak-laporan-pengeluaran', function (Request $request) {
+    // PERMISSION: Hanya Super Admin yang bisa akses
+    if (!auth()->user()->isSuperAdmin()) {
+        abort(403, 'Unauthorized action.');
+    }
+    
     $query = \App\Models\Expense::with('creator');
     
     // FILTER TAMBAHAN DARI TABEL
@@ -687,6 +702,11 @@ Route::get('/export-attendance', function (Request $request) {
 
 // 7. BACKUP DATABASE
 Route::get('/backup-database', function () {
+    // PERMISSION: Hanya Super Admin yang bisa akses
+    if (!auth()->user()->isSuperAdmin()) {
+        abort(403, 'Unauthorized action.');
+    }
+    
     $dbName = config('database.connections.mysql.database');
     $dbUser = config('database.connections.mysql.username');
     $dbPass = config('database.connections.mysql.password');

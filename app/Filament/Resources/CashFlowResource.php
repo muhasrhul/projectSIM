@@ -34,6 +34,32 @@ class CashFlowResource extends Resource
     
     protected static ?int $navigationSort = 1;
 
+    // PERMISSION: Hanya Super Admin yang bisa akses Pembukuan
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->isSuperAdmin();
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->isSuperAdmin();
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->isSuperAdmin();
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->isSuperAdmin();
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()->isSuperAdmin();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -270,20 +296,4 @@ class CashFlowResource extends Resource
             'edit' => Pages\EditCashFlow::route('/{record}/edit'),
         ];
     }
-    
-    public static function canCreate(): bool
-    {
-        return true; // Hanya untuk pengeluaran manual
-    }
-    
-    public static function canEdit(Model $record): bool
-    {
-        return $record->source === 'pengeluaran'; // Hanya pengeluaran manual yang bisa diedit
-    }
-    
-    public static function canDelete(Model $record): bool
-    {
-        $user = auth()->user();
-        return $record->source === 'pengeluaran' && $user && ($user->isAdmin() || $user->isSuperAdmin());
-    }    
 }

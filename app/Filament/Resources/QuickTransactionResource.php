@@ -20,25 +20,30 @@ class QuickTransactionResource extends Resource
     protected static ?string $pluralLabel = 'Transaksi Kasir Cepat';
     protected static ?string $navigationGroup = 'Keuangan';
     
-    // PERMISSION: Staff hanya bisa lihat, tidak bisa create/edit/delete
+    // PERMISSION: Hanya Super Admin yang bisa akses
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->isSuperAdmin();
+    }
+
     public static function canCreate(): bool
     {
-        return !auth()->user()->isStaff(); // Super Admin & Admin bisa
+        return auth()->user()->isSuperAdmin();
     }
 
     public static function canEdit($record): bool
     {
-        return !auth()->user()->isStaff(); // Super Admin & Admin bisa
+        return auth()->user()->isSuperAdmin();
     }
 
     public static function canDelete($record): bool
     {
-        return !auth()->user()->isStaff(); // Super Admin & Admin bisa
+        return auth()->user()->isSuperAdmin();
     }
 
     public static function canDeleteAny(): bool
     {
-        return !auth()->user()->isStaff(); // Super Admin & Admin bisa
+        return auth()->user()->isSuperAdmin();
     }
 
     public static function form(Form $form): Form
