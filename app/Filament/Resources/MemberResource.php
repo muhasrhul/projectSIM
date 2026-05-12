@@ -777,6 +777,12 @@ class MemberResource extends Resource
                         ->whereYear('expiry_date', Carbon::now()->year))
                     ->toggle(),
 
+                // Filter 4: Berakhir Hari Ini
+                Tables\Filters\Filter::make('expiry_today')
+                    ->label('Berakhir Hari Ini')
+                    ->query(fn ($query) => $query->whereDate('expiry_date', Carbon::now('Asia/Makassar')->toDateString()))
+                    ->toggle(),
+
                 // Filter 4: Punya Fingerprint
                 Tables\Filters\Filter::make('has_fingerprint')
                     ->label('Punya Fingerprint')
