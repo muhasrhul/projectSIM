@@ -49,32 +49,49 @@ class TelegramHelper
             return false;
         }
         
-        try {
-            $response = Http::timeout(3) // Timeout 3 detik saja untuk notifikasi cepat
-                ->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
-                    'chat_id' => $chatId,
-                    'text' => $message,
-                    'parse_mode' => 'Markdown',
-                ]);
-            
-            if ($response->successful()) {
-                Log::info('[Telegram] Notifikasi berhasil dikirim', [
-                    'chat_id' => $chatId,
-                    'message_preview' => substr($message, 0, 100)
-                ]);
-                return true;
-            } else {
-                Log::error('[Telegram] Gagal kirim notifikasi', [
-                    'response' => $response->body()
-                ]);
-                return false;
-            }
-        } catch (\Exception $e) {
-            Log::error('[Telegram] Error kirim notifikasi', [
-                'error' => $e->getMessage()
-            ]);
-            return false;
+        // Potong pesan jika melebihi batas Telegram (4096 karakter)
+        if (strlen($message) > 4096) {
+            $message = substr($message, 0, 4090) . "\n...";
         }
+
+        $maxRetries = 3;
+        $attempt = 0;
+
+        while ($attempt < $maxRetries) {
+            $attempt++;
+            try {
+                $response = Http::timeout(10)
+                    ->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                        'chat_id' => $chatId,
+                        'text' => $message,
+                        'parse_mode' => 'Markdown',
+                    ]);
+                
+                if ($response->successful()) {
+                    Log::info('[Telegram] Notifikasi berhasil dikirim', [
+                        'chat_id' => $chatId,
+                        'message_preview' => substr($message, 0, 100),
+                        'attempt' => $attempt,
+                    ]);
+                    return true;
+                } else {
+                    Log::warning('[Telegram] Gagal kirim notifikasi (attempt ' . $attempt . ')', [
+                        'response' => $response->body()
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::warning('[Telegram] Error kirim notifikasi (attempt ' . $attempt . ')', [
+                    'error' => $e->getMessage()
+                ]);
+            }
+
+            if ($attempt < $maxRetries) {
+                sleep(pow(2, $attempt - 1)); // Exponential backoff: 1s, 2s, 4s
+            }
+        }
+
+        Log::error('[Telegram] Gagal kirim notifikasi setelah ' . $maxRetries . ' percobaan');
+        return false;
     }
     
     /**
