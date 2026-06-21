@@ -50,17 +50,17 @@ class IncomeChart extends LineChartWidget
 
             // Cache data hari-hari yang sudah lewat (tidak akan berubah)
             $pastCashFlows = cache()->remember('chart_income_past_' . $today, 86400, function () use ($now, $today) {
-                return CashFlow::selectRaw('DATE(date) as date, SUM(amount) as total')
-                    ->whereMonth('date', $now->month)
-                    ->whereYear('date', $now->year)
+                return CashFlow::selectRaw('DATE(CONVERT_TZ(date, "+00:00", "+08:00")) as date, SUM(amount) as total')
+                    ->whereRaw('MONTH(CONVERT_TZ(date, "+00:00", "+08:00")) = ?', [$now->month])
+                    ->whereRaw('YEAR(CONVERT_TZ(date, "+00:00", "+08:00")) = ?', [$now->year])
                     ->where('type', 'income')
-                    ->whereDate('date', '<', $today)
-                    ->groupBy('date')
+                    ->whereRaw('DATE(CONVERT_TZ(date, "+00:00", "+08:00")) < ?', [$today])
+                    ->groupByRaw('DATE(CONVERT_TZ(date, "+00:00", "+08:00"))')
                     ->pluck('total', 'date');
             });
 
             // Data hari ini selalu fresh (tidak di-cache)
-            $todayTotal = CashFlow::whereDate('date', $today)
+            $todayTotal = CashFlow::whereRaw('DATE(CONVERT_TZ(date, "+00:00", "+08:00")) = ?', [$today])
                 ->where('type', 'income')
                 ->sum('amount');
 
@@ -81,17 +81,17 @@ class IncomeChart extends LineChartWidget
 
             // Cache bulan-bulan yang sudah lewat
             $pastMonths = cache()->remember('chart_income_year_past_' . $now->format('Y-m'), 86400, function () use ($now) {
-                return CashFlow::selectRaw('MONTH(date) as month, SUM(amount) as total')
-                    ->whereYear('date', $now->year)
+                return CashFlow::selectRaw('MONTH(CONVERT_TZ(date, "+00:00", "+08:00")) as month, SUM(amount) as total')
+                    ->whereRaw('YEAR(CONVERT_TZ(date, "+00:00", "+08:00")) = ?', [$now->year])
                     ->where('type', 'income')
-                    ->where('date', '<', $now->copy()->startOfMonth())
-                    ->groupBy('month')
+                    ->whereRaw('DATE(CONVERT_TZ(date, "+00:00", "+08:00")) < ?', [$now->copy()->startOfMonth()->format('Y-m-d')])
+                    ->groupByRaw('MONTH(CONVERT_TZ(date, "+00:00", "+08:00"))')
                     ->pluck('total', 'month');
             });
 
             // Bulan ini selalu fresh
-            $thisMonthTotal = CashFlow::whereYear('date', $now->year)
-                ->whereMonth('date', $now->month)
+            $thisMonthTotal = CashFlow::whereRaw('YEAR(CONVERT_TZ(date, "+00:00", "+08:00")) = ?', [$now->year])
+                ->whereRaw('MONTH(CONVERT_TZ(date, "+00:00", "+08:00")) = ?', [$now->month])
                 ->where('type', 'income')
                 ->sum('amount');
 
