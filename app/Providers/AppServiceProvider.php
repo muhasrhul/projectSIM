@@ -595,6 +595,13 @@ class AppServiceProvider extends ServiceProvider
                     span.text-sm.font-medium:contains("Fingerprint") {
                         font-weight: 700 !important;
                     }
+
+                    /* Sembunyikan tanda bintang required di semua form */
+                    .filament-forms-field-wrapper-label sup,
+                    .filament-forms-field-wrapper label sup,
+                    label sup {
+                        display: none !important;
+                    }
                 </style>
                 
                 <script>

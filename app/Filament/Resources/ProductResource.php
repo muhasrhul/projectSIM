@@ -66,11 +66,11 @@ class ProductResource extends Resource
                             ->required()
                             ->helperText('Jumlah produk yang tersedia. 0 = Habis'),
 
-                        Forms\Components\TextInput::make('icon')
-                            ->label('Ikon FontAwesome')
-                            ->default('fa-solid fa-cart-shopping')
-                            ->placeholder('Contoh: fa-solid fa-bottle-water')
-                            ->helperText('Gunakan kode dari FontAwesome (e.g., fa-solid fa-dumbbell)'),
+                        // Forms\Components\TextInput::make('icon')
+                        //     ->label('Ikon FontAwesome')
+                        //     ->default('fa-solid fa-cart-shopping')
+                        //     ->placeholder('Contoh: fa-solid fa-bottle-water')
+                        //     ->helperText('Gunakan kode dari FontAwesome (e.g., fa-solid fa-dumbbell)'),
 
                         // UPDATE: Hanya pilihan Orange dan Black agar sesuai tampilan Premium
                         Forms\Components\Select::make('color')

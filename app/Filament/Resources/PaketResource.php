@@ -57,11 +57,11 @@ class PaketResource extends Resource
                                     ->maxLength(255),
 
                                 // --- UPDATE BARU: Input Label Promo ---
-                                Forms\Components\TextInput::make('label_promo')
-                                    ->label('Label Promo (Opsional)')
-                                    ->placeholder('Contoh: BEST SELLER / DISKON 50%')
-                                    ->maxLength(50)
-                                    ->helperText('Isi text ini untuk memunculkan badge merah (Promo) di website.'),
+                                // Forms\Components\TextInput::make('label_promo')
+                                //     ->label('Label Promo (Opsional)')
+                                //     ->placeholder('Contoh: BEST SELLER / DISKON 50%')
+                                //     ->maxLength(50)
+                                //     ->helperText('Isi text ini untuk memunculkan badge merah (Promo) di website.'),
                                 // ---------------------------------------
 
                                 Forms\Components\TextInput::make('harga')
@@ -93,11 +93,11 @@ class PaketResource extends Resource
                                     ->helperText('Nonaktifkan jika paket tidak ingin dijual sementara'),
                             ]),
 
-                        Forms\Components\Textarea::make('fasilitas')
-                            ->label('Fasilitas Paket')
-                            ->placeholder('Contoh: Akses Alat Lengkap, WiFi, Locker, Shower')
-                            ->rows(3)
-                            ->columnSpanFull(), 
+                        // Forms\Components\Textarea::make('fasilitas')
+                        //     ->label('Fasilitas Paket')
+                        //     ->placeholder('Contoh: Akses Alat Lengkap, WiFi, Locker, Shower')
+                        //     ->rows(3)
+                        //     ->columnSpanFull(),
                     ])
             ]);
     }
@@ -112,10 +112,10 @@ class PaketResource extends Resource
                     ->searchable(),
 
                 // Opsional: Menampilkan Label Promo di Tabel Admin biar gampang dicek
-                Tables\Columns\TextColumn::make('label_promo')
-                    ->label('Badge')
-                    ->sortable()
-                    ->color('danger'), 
+                // Tables\Columns\TextColumn::make('label_promo')
+                //     ->label('Badge')
+                //     ->sortable()
+                //     ->color('danger'),
 
                 Tables\Columns\TextColumn::make('harga')
                     ->label('Harga')

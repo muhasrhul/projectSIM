@@ -1505,27 +1505,7 @@
         </div>
     </div>
 
-    <div style="margin-top: 60px; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 30px;">
-        <div class="system-branding" style="
-            display: inline-block; 
-            padding: 10px 30px; 
-            border-radius: 8px; 
-            background: var(--branding-bg); 
-            border: 1px solid var(--branding-border);
-            transition: all 0.3s ease;
-        ">
-            <p style="
-                font-size: 0.75rem; 
-                font-weight: 800; 
-                color: var(--branding-text); 
-                text-transform: uppercase; 
-                letter-spacing: 2px; 
-                margin: 0;
-            ">
-                ARIFAH Gym Intelligence POS System
-            </p>
-        </div>
-    </div>
+    {{-- Branding footer dinonaktifkan --}}
 
     <script>
         let selectedProduct = null;

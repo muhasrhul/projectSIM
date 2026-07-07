@@ -16,7 +16,7 @@ use Illuminate\Support\HtmlString;
 
 class ExpiredMembers extends BaseWidget
 {
-    protected static ?string $heading = '⚠️ Member Habis Masa Aktif (Jatuh Tempo)';
+    protected static ?string $heading = 'Member Habis Masa Aktif (Jatuh Tempo)';
     protected static ?int $sort = 8; 
     protected int | string | array $columnSpan = 'full';
     
