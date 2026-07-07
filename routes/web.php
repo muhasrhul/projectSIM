@@ -23,8 +23,10 @@ Route::get('/login', function () {
     return redirect('/admin/login');
 })->name('login');
 
-// 1. HALAMAN UTAMA & SEARCH
-Route::get('/', [FrontMemberController::class, 'index'])->name('home');
+// 1. HALAMAN UTAMA - Redirect ke admin login
+Route::get('/', function () {
+    return redirect('/admin');
+})->name('home');
 
 // 1.1 HALAMAN KASIR - Landing page untuk pilih menu absen atau registrasi
 Route::get('/kasir', function () {
@@ -39,13 +41,13 @@ Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name
 Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset.form');
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.reset.submit');
 
-// 2. PROSES PENDAFTARAN
-Route::get('/daftar', function () {
-    $pakets = \App\Models\Paket::where('is_active', true)->get();
-    return view('daftar', compact('pakets'));
-});
+// 2. PROSES PENDAFTARAN (DINONAKTIFKAN)
+// Route::get('/daftar', function () {
+//     $pakets = \App\Models\Paket::where('is_active', true)->get();
+//     return view('daftar', compact('pakets'));
+// });
 
-Route::post('/daftar', [FrontMemberController::class, 'store'])->name('member.register');
+// Route::post('/daftar', [FrontMemberController::class, 'store'])->name('member.register');
 
 // 2.1 UPDATE METODE PEMBAYARAN
 Route::post('/update-payment-method', [FrontMemberController::class, 'updatePaymentMethod'])->name('member.updatePaymentMethod');

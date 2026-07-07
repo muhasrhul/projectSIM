@@ -83,13 +83,13 @@ class MemberResource extends Resource
                         ->placeholder('Masukkan nama lengkap member')
                         ->required(),
 
-                    Forms\Components\TextInput::make('nik')
-                        ->label('NIK KTP')
-                        ->maxLength(16)
-                        ->minLength(16)
-                        ->numeric()
-                        ->placeholder('Masukkan 16 digit NIK KTP')
-                        ->unique(ignorable: fn ($record) => $record),
+                    // Forms\Components\TextInput::make('nik')
+                    //     ->label('NIK KTP')
+                    //     ->maxLength(16)
+                    //     ->minLength(16)
+                    //     ->numeric()
+                    //     ->placeholder('Masukkan 16 digit NIK KTP')
+                    //     ->unique(ignorable: fn ($record) => $record),
 
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('email')
@@ -106,12 +106,12 @@ class MemberResource extends Resource
                             ->unique(ignorable: fn ($record) => $record),
                     ]),
 
-                    Forms\Components\TextInput::make('fingerprint_id')
-                        ->label('Fingerprint ID')
-                        ->maxLength(50)
-                        ->unique(ignorable: fn ($record) => $record)
-                        ->placeholder('Input ID Fingerprint')
-                        ->helperText('Di input oleh admin'),
+                    // Forms\Components\TextInput::make('fingerprint_id')
+                    //     ->label('Fingerprint ID')
+                    //     ->maxLength(50)
+                    //     ->unique(ignorable: fn ($record) => $record)
+                    //     ->placeholder('Input ID Fingerprint')
+                    //     ->helperText('Di input oleh admin'),
                     
                     Forms\Components\Section::make('Informasi Membership')->schema([
                         Forms\Components\Select::make('type')
@@ -618,20 +618,20 @@ class MemberResource extends Resource
                     // ->color(fn (Member $record): string => $record->trashed() ? 'danger' : 'default') // Hapus karena soft delete dihapus
                     ->toggleable(isToggledHiddenByDefault: false),
                 
-                Tables\Columns\TextColumn::make('nik')
-                    ->label('NIK KTP')
-                    ->searchable()
-                    ->default('-')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('nik')
+                //     ->label('NIK KTP')
+                //     ->searchable()
+                //     ->default('-')
+                //     ->toggleable(isToggledHiddenByDefault: true),
                 
-                Tables\Columns\TextColumn::make('fingerprint_id')
-                    ->label('Fingerprint ID ⇅')
-                    ->searchable()
-                    ->sortable()
-                    ->default('-')
-                    ->color('primary')
-                    ->weight('medium')
-                    ->toggleable(isToggledHiddenByDefault: false),
+                // Tables\Columns\TextColumn::make('fingerprint_id')
+                //     ->label('Fingerprint ID ⇅')
+                //     ->searchable()
+                //     ->sortable()
+                //     ->default('-')
+                //     ->color('primary')
+                //     ->weight('medium')
+                //     ->toggleable(isToggledHiddenByDefault: false),
                 
                 Tables\Columns\BadgeColumn::make('type')
                     ->label('Tipe')
@@ -693,16 +693,15 @@ class MemberResource extends Resource
                     ->openUrlInNewTab()
                     ->toggleable(isToggledHiddenByDefault: false),
 
-                // Kolom Preview Tanda Tangan dengan Modal
-                Tables\Columns\ViewColumn::make('signature_preview')
-                    ->label('TTD Digital')
-                    ->view('filament.tables.columns.signature-preview')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\ViewColumn::make('signature_preview')
+                //     ->label('TTD Digital')
+                //     ->view('filament.tables.columns.signature-preview')
+                //     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('signature_timestamp')
-                    ->label('Waktu TTD')
-                    ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->setTimezone('Asia/Makassar')->format('d/m/Y H:i') : '-')
-                    ->toggleable(isToggledHiddenByDefault: true), // Hidden by default
+                // Tables\Columns\TextColumn::make('signature_timestamp')
+                //     ->label('Waktu TTD')
+                //     ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->setTimezone('Asia/Makassar')->format('d/m/Y H:i') : '-')
+                //     ->toggleable(isToggledHiddenByDefault: true),
 
                 // --- KOLOM STATUS YANG SUDAH DIPERBARUI LOGIKANYA ---
                 Tables\Columns\BadgeColumn::make('status')
