@@ -898,6 +898,24 @@ Route::get('/signature/{member}', function (Member $member) {
     return view('signature-view', compact('member'));
 })->name('member.signature');
 
+// 13. ROUTE DOWNLOAD KARTU MEMBER
+Route::get('/member-card/{member}', function (Member $member) {
+    $now = \Carbon\Carbon::now('Asia/Makassar')->startOfDay();
+    $expiredDate = \Carbon\Carbon::parse($member->expiry_date)->startOfDay();
+    $isExpired = $expiredDate->lt($now) || !$member->is_active;
+
+    // Fetch QR code server-side untuk menghindari CORS
+    try {
+        $qrResponse = \Illuminate\Support\Facades\Http::timeout(5)
+            ->get("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={$member->id}");
+        $qrBase64 = 'data:image/png;base64,' . base64_encode($qrResponse->body());
+    } catch (\Exception $e) {
+        $qrBase64 = '';
+    }
+
+    return view('member-card-download', compact('member', 'isExpired', 'qrBase64'));
+})->middleware(['auth:web'])->name('member.card.download');
+
 // Export Pembukuan PDF - PROTECTED
 Route::middleware(['auth'])->get('/export/pembukuan', function (Request $request) {
     $period = $request->get('period', 'today');

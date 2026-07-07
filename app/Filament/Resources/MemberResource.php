@@ -703,6 +703,14 @@ class MemberResource extends Resource
                 //     ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->setTimezone('Asia/Makassar')->format('d/m/Y H:i') : '-')
                 //     ->toggleable(isToggledHiddenByDefault: true),
 
+                Tables\Columns\TextColumn::make('kartu_member')
+                    ->label('Kartu')
+                    ->getStateUsing(fn () => 'Lihat Kartu')
+                    ->url(fn ($record) => route('member.card.download', $record->id))
+                    ->openUrlInNewTab()
+                    ->color('primary')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 // --- KOLOM STATUS YANG SUDAH DIPERBARUI LOGIKANYA ---
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Status')

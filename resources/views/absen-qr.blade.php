@@ -160,7 +160,7 @@
             ctx.drawImage(video, sx, sy, size, size, 0, 0, size, size);
 
             const imageData = ctx.getImageData(0, 0, size, size);
-            const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+            const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
 
             if (code) {
                 const memberId = code.data.trim();
