@@ -926,6 +926,7 @@ class MemberResource extends Resource
             ->headerActions([
                 Tables\Actions\Action::make('export_excel')
                     ->label('Export Excel')
+                    ->hidden()
                     ->color('success')
                     ->icon('heroicon-o-document-download')
                     ->url(fn () => route('export-members', ['format' => 'excel']))

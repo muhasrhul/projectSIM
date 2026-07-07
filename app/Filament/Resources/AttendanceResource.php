@@ -204,6 +204,7 @@ class AttendanceResource extends Resource
             ->headerActions([
                 Tables\Actions\Action::make('export_excel')
                     ->label('Export Excel')
+                    ->hidden()
                     ->color('success')
                     ->icon('heroicon-o-document-download')
                     ->form([
