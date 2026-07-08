@@ -59,46 +59,59 @@ class AttendanceResource extends Resource
             Forms\Components\Card::make()->schema([
                 Forms\Components\Select::make('member_id')
                     ->label('Nama Member')
-                    ->relationship('member', 'name')
+                    ->options(function () {
+                        $today = \Carbon\Carbon::now('Asia/Makassar')->startOfDay();
+                        return \App\Models\Member::all()->mapWithKeys(function ($member) use ($today) {
+                            $expired = $member->expiry_date
+                                ? \Carbon\Carbon::parse($member->expiry_date)->startOfDay()->lte($today)
+                                : false;
+
+                            if (!$member->is_active) {
+                                return [$member->id => "{$member->name} ({$member->phone}) — Non-Aktif"];
+                            }
+                            if ($expired) {
+                                return [$member->id => "{$member->name} ({$member->phone}) — Expired"];
+                            }
+                            return [$member->id => "{$member->name} ({$member->phone}) — Aktif"];
+                        });
+                    })
+                    ->getSearchResultsUsing(function (string $search) {
+                        $today = \Carbon\Carbon::now('Asia/Makassar')->startOfDay();
+                        return \App\Models\Member::where('name', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%")
+                            ->get()
+                            ->mapWithKeys(function ($member) use ($today) {
+                                $expired = $member->expiry_date
+                                    ? \Carbon\Carbon::parse($member->expiry_date)->startOfDay()->lte($today)
+                                    : false;
+
+                                if (!$member->is_active) {
+                                    return [$member->id => "{$member->name} ({$member->phone}) — Non-Aktif"];
+                                }
+                                if ($expired) {
+                                    return [$member->id => "{$member->name} ({$member->phone}) — Expired"];
+                                }
+                                return [$member->id => "{$member->name} ({$member->phone}) — Aktif"];
+                            });
+                    })
+                    ->disableOptionWhen(function ($value) {
+                        $member = \App\Models\Member::find($value);
+                        if (!$member) return true;
+                        $today = \Carbon\Carbon::now('Asia/Makassar')->startOfDay();
+                        $expired = $member->expiry_date
+                            ? \Carbon\Carbon::parse($member->expiry_date)->startOfDay()->lte($today)
+                            : false;
+                        return !$member->is_active || $expired;
+                    })
                     ->searchable()
-                    ->required()
-                    // LOGIKA ANTI-DOUBLE ABSEN & VALIDASI EXPIRED
-                    ->rules([
-                        function () {
-                            return function (string $attribute, $value, \Closure $fail) {
-                                // 1. Cek double absen dengan timezone Asia/Makassar
-                                $today = Carbon::now('Asia/Makassar')->startOfDay();
-                                $tomorrow = Carbon::now('Asia/Makassar')->endOfDay();
-                                
-                                $sudahAbsen = Attendance::where('member_id', $value)
-                                    ->whereBetween('created_at', [$today, $tomorrow])
-                                    ->exists();
-
-                                if ($sudahAbsen) {
-                                    $fail('Member ini sudah melakukan absensi hari ini.');
-                                    return;
-                                }
-
-                                // 2. Cek apakah hari ini = tanggal expired
-                                $member = \App\Models\Member::find($value);
-                                if ($member && $member->expiry_date) {
-                                    $today = Carbon::now('Asia/Makassar')->startOfDay();
-                                    $expiryDate = Carbon::parse($member->expiry_date)->startOfDay();
-                                    
-                                    if ($today->equalTo($expiryDate)) {
-                                        $fail("Member {$member->name} tidak bisa absen karena membership berakhir hari ini. Silakan perpanjang terlebih dahulu.");
-                                    }
-                                }
-                            };
-                        },
-                    ]),
+                    ->placeholder('Cari dan pilih nama member...')
+                    ->required(),
 
                 // Hanya kolom waktu check-in sesuai database baru
                 Forms\Components\DateTimePicker::make('created_at')
                     ->label('Waktu Check-in')
                     ->default(now())
-                    ->disabled() // Otomatis dari sistem
-                    ->dehydrated(), // Agar tetap tersimpan meski disabled
+                    ->required(),
             ])
         ]);
     }
