@@ -29,9 +29,9 @@ Route::get('/', function () {
 })->name('home');
 
 // 1.1 HALAMAN KASIR - Landing page untuk pilih menu absen atau registrasi
-Route::get('/kasir', function () {
-    return view('kasir');
-})->name('kasir');
+// Route::get('/kasir', function () {
+//     return view('kasir');
+// })->name('kasir');
 
 // 1.2 FORGOT PASSWORD & RESET PASSWORD (KHUSUS ADMIN/OWNER) - OTP VIA WHATSAPP
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showOtpRequestForm'])->name('password.request.otp');
