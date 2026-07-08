@@ -711,6 +711,12 @@ class MemberResource extends Resource
                     ->color('primary')
                     ->toggleable(isToggledHiddenByDefault: true),
 
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->default('-')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 // --- KOLOM STATUS YANG SUDAH DIPERBARUI LOGIKANYA ---
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Status')
