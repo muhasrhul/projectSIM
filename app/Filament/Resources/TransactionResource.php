@@ -91,7 +91,15 @@ class TransactionResource extends Resource
 
                 Forms\Components\TextInput::make('order_id')
                     ->label('ID Transaksi / Order ID')
-                    ->default('MANUAL-' . uniqid())
+                    ->default(function () {
+                        $today = now()->format('Ymd');
+                        $prefix = 'TRX-' . $today . '-';
+                        $last = \App\Models\Transaction::where('order_id', 'like', $prefix . '%')
+                            ->orderBy('order_id', 'desc')
+                            ->value('order_id');
+                        $nextNumber = $last ? (intval(substr($last, -4)) + 1) : 1;
+                        return $prefix . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+                    })
                     ->required(),
 
                 Forms\Components\TextInput::make('amount')
@@ -126,10 +134,10 @@ class TransactionResource extends Resource
                 Forms\Components\Select::make('payment_method')
                     ->label('Metode Bayar')
                     ->options([
-                        'Cash' => 'Cash',
+                        'QRIS' => 'QRIS',
                         'Transfer Bank' => 'Transfer Bank',
                     ])
-                    ->default('Cash')
+                    ->default('QRIS')
                     ->required(),
 
                 Forms\Components\DateTimePicker::make('payment_date')
