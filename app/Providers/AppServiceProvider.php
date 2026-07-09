@@ -41,6 +41,10 @@ class AppServiceProvider extends ServiceProvider
             Filament::registerStyles([
                 asset('css/filament-dark-fix.css?v=' . time()),
             ]);
+
+            Filament::registerScripts([
+                asset('js/novalidate.js'),
+            ]);
             
             // 1. DAFTAR NAVIGATION ITEMS
             Filament::registerNavigationItems([

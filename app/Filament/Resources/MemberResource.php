@@ -96,13 +96,18 @@ class MemberResource extends Resource
                             ->email()
                             ->label('Email')
                             ->placeholder('Masukkan alamat email')
+                            ->maxLength(254)
+                            ->rules(['max:254', 'regex:/^\S+$/', 'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/'])
                             ->unique(ignorable: fn ($record) => $record),
 
                         Forms\Components\TextInput::make('phone')
                             ->label('WhatsApp')
-                            ->tel()
+                            ->numeric()
                             ->placeholder('Masukkan nomor WhatsApp')
                             ->required()
+                            ->rules([
+                                'regex:/^\+?628[0-9]{7,12}$|^08[0-9]{7,12}$|^8[0-9]{8,13}$/',
+                            ])
                             ->unique(ignorable: fn ($record) => $record),
                     ]),
 
@@ -170,6 +175,7 @@ class MemberResource extends Resource
                                 ->label('Tanggal Mulai')
                                 ->placeholder('Pilih tanggal mulai membership')
                                 ->helperText('Tanggal mulai tidak berubah saat perpanjangan')
+                                ->default(now())
                                 ->required()
                                 ->reactive()
                                 ->closeOnDateSelection()
@@ -260,7 +266,7 @@ class MemberResource extends Resource
                         Forms\Components\Grid::make(3)->schema([
                             Forms\Components\TextInput::make('biaya_paket_info')
                                 ->label('Biaya Paket')
-                                ->placeholder('Otomatis...')
+                                ->placeholder('')
                                 ->numeric()
                                 ->prefix('Rp')
                                 ->reactive()
@@ -318,7 +324,7 @@ class MemberResource extends Resource
 
                             Forms\Components\TextInput::make('biaya_registrasi_info')
                                 ->label('Biaya Admin')
-                                ->placeholder('Otomatis...')
+                                ->placeholder('')
                                 ->numeric()
                                 ->prefix('Rp')
                                 ->reactive()
@@ -434,7 +440,7 @@ class MemberResource extends Resource
 
                             Forms\Components\TextInput::make('harga_paket_info')
                                 ->label('TOTAL TAGIHAN')
-                                ->placeholder('Otomatis...')
+                                ->placeholder('')
                                 ->numeric()
                                 ->prefix('Rp')
                                 ->reactive()
