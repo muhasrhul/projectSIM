@@ -81,7 +81,15 @@ class MemberResource extends Resource
                     Forms\Components\TextInput::make('name')
                         ->label('Nama Lengkap')
                         ->placeholder('Masukkan nama lengkap member')
-                        ->required(),
+                        ->required()
+                        ->minLength(2)
+                        ->maxLength(100)
+                        ->rules([
+                            'min:2',
+                            'max:100',
+                            'regex:/^[a-zA-Z][a-zA-Z\s\'.\-]*$/', // harus diawali huruf, hanya huruf, spasi, petik, titik, hubung
+                            'not_regex:/^\s+$/',                   // tidak boleh hanya spasi
+                        ]),
 
                     // Forms\Components\TextInput::make('nik')
                     //     ->label('NIK KTP')
