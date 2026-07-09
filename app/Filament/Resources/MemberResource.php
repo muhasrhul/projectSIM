@@ -129,7 +129,7 @@ class MemberResource extends Resource
                     Forms\Components\Section::make('Informasi Membership')->schema([
                         Forms\Components\Select::make('type')
                             ->label('Tipe Member')
-                            ->options(Paket::all()->pluck('nama_paket', 'nama_paket'))
+                            ->options(Paket::where('is_active', true)->pluck('nama_paket', 'nama_paket'))
                             ->placeholder('Pilih tipe member')
                             ->reactive() 
                             ->required()

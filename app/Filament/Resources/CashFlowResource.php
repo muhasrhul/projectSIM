@@ -24,9 +24,9 @@ class CashFlowResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calculator';
     
-    protected static ?string $navigationLabel = 'Pembukuan';
+    protected static ?string $navigationLabel = 'Laporan Arus Kas';
     
-    protected static ?string $modelLabel = 'Pembukuan';
+    protected static ?string $modelLabel = 'Laporan Arus Kas';
     
     protected static ?string $pluralModelLabel = 'Pembukuan';
     

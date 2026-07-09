@@ -20,8 +20,8 @@ class TransactionResource extends Resource
     protected static ?string $model = Transaction::class;
     protected static ?string $navigationIcon = 'heroicon-o-cash';
     protected static ?int $navigationSort = 1; // Urutan pertama
-    protected static ?string $navigationLabel = 'Transaksi Member';
-    protected static ?string $pluralLabel = 'Transaksi Member';
+    protected static ?string $navigationLabel = 'Transaksi Membership';
+    protected static ?string $pluralLabel = 'Transaksi Membership';
     protected static ?string $navigationGroup = 'Keuangan';
     
     // PERMISSION: Hanya Super Admin yang bisa akses
