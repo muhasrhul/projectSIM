@@ -54,8 +54,10 @@ class QuickTransactionResource extends Resource
                     ->label('Nama Tamu')
                     ->required(),
 
-                Forms\Components\TextInput::make('product_name')
+                Forms\Components\Select::make('product_name')
                     ->label('Nama Produk')
+                    ->options(fn () => \App\Models\Product::where('is_active', true)->orderBy('name')->pluck('name', 'name'))
+                    ->searchable()
                     ->required(),
 
                 Forms\Components\TextInput::make('order_id')
@@ -82,10 +84,10 @@ class QuickTransactionResource extends Resource
                 Forms\Components\Select::make('payment_method')
                     ->label('Metode Bayar')
                     ->options([
-                        'Cash' => 'Cash',
+                        'QRIS' => 'QRIS',
                         'Transfer Bank' => 'Transfer Bank',
                     ])
-                    ->default('Cash')
+                    ->default('QRIS')
                     ->required(),
 
                 Forms\Components\DateTimePicker::make('payment_date')
