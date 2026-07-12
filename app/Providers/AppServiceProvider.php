@@ -155,8 +155,8 @@ class AppServiceProvider extends ServiceProvider
                     }
 
                     .filament-login-page input:focus {
-                        border-color: #f97316 !important;
-                        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2) !important;
+                        border-color: #f59e0b !important;
+                        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
                         background: rgba(255, 255, 255, 0.08) !important;
                         outline: none !important;
                     }
@@ -170,8 +170,8 @@ class AppServiceProvider extends ServiceProvider
                     }
 
                     .filament-login-page input[type="checkbox"]:checked {
-                        background-color: #f97316 !important;
-                        border-color: #f97316 !important;
+                        background-color: #f59e0b !important;
+                        border-color: #f59e0b !important;
                     }
 
                     /* Icon mata toggle password */
@@ -180,8 +180,8 @@ class AppServiceProvider extends ServiceProvider
                     .filament-login-page .filament-forms-password-component button svg,
                     .filament-login-page input[type="password"] ~ button svg,
                     .filament-login-page input[type="text"] ~ button svg {
-                        color: #f97316 !important;
-                        stroke: #f97316 !important;
+                        color: #f59e0b !important;
+                        stroke: #f59e0b !important;
                     }
 
                     /* Text "Ingat Saya" */
@@ -191,7 +191,7 @@ class AppServiceProvider extends ServiceProvider
 
                     /* Tombol Submit Login Modern */
                     .filament-login-page button[type="submit"] {
-                        background: linear-gradient(135deg, #f97316 0%, #f97316 100%) !important;
+                        background: linear-gradient(135deg, #f59e0b 0%, #f59e0b 100%) !important;
                         color: #ffffff !important;
                         border: none !important;
                         border-radius: 12px !important;
@@ -201,13 +201,13 @@ class AppServiceProvider extends ServiceProvider
                         letter-spacing: 0.1em !important;
                         transition: all 0.3s ease !important;
                         width: 100% !important;
-                        box-shadow: 0 10px 25px rgba(249, 115, 22, 0.3) !important;
+                        box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3) !important;
                         margin-top: 1.5rem !important;
                     }
 
                     .filament-login-page button[type="submit"]:hover {
                         transform: scale(1.02) !important;
-                        box-shadow: 0 15px 35px rgba(249, 115, 22, 0.5) !important;
+                        box-shadow: 0 15px 35px rgba(245, 158, 11, 0.5) !important;
                     }
 
                     /* Link "Lupa Password" */
@@ -676,16 +676,16 @@ class AppServiceProvider extends ServiceProvider
 
                         #mobile-bottom-nav a.active,
                         #mobile-bottom-nav a:hover {
-                            color: #f97316;
+                            color: #f59e0b;
                         }
 
                         #mobile-bottom-nav a.nav-kasir {
                             color: #ffffff;
-                            background: #f97316;
+                            background: #f59e0b;
                             border-radius: 16px;
                             padding: 8px 16px;
                             margin-bottom: 8px;
-                            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+                            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
                         }
 
                         #mobile-bottom-nav a.nav-kasir svg {

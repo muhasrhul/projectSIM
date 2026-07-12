@@ -115,8 +115,8 @@ button[type="submit"].filament-button,
 .filament-login-page button[type="submit"],
 button.filament-button.bg-primary-600,
 .bg-primary-600 {
-    background-color: #f97316 !important;
-    border-color: #f97316 !important;
+    background-color: #f59e0b !important;
+    border-color: #f59e0b !important;
 }
 
 .filament-button[type="submit"]:hover,
