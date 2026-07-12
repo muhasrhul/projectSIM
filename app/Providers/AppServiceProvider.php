@@ -616,7 +616,146 @@ class AppServiceProvider extends ServiceProvider
                     label sup {
                         display: none !important;
                     }
+
+                    /* =========================================
+                       BOTTOM NAVIGATION BAR - MOBILE ONLY
+                       ========================================= */
+                    #mobile-bottom-nav {
+                        display: none;
+                    }
+
+                    @media (max-width: 768px) {
+                        #mobile-bottom-nav {
+                            display: flex;
+                            position: fixed;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
+                            z-index: 9999;
+                            background: #f9fafb;
+                            border-top: 1px solid rgba(0,0,0,0.08);
+                            padding: 8px 0 12px;
+                            justify-content: space-around;
+                            align-items: center;
+                        }
+
+                        .dark #mobile-bottom-nav {
+                            background: #111827;
+                            border-top: 1px solid rgba(255,255,255,0.06);
+                        }
+
+                        #mobile-bottom-nav a {
+                            color: #6b7280;
+                        }
+
+                        .dark #mobile-bottom-nav a {
+                            color: #71717a;
+                        }
+
+                        #mobile-bottom-nav a {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 3px;
+                            text-decoration: none;
+                            font-size: 10px;
+                            font-weight: 600;
+                            letter-spacing: 0.05em;
+                            text-transform: uppercase;
+                            padding: 4px 12px;
+                            border-radius: 12px;
+                            transition: all 0.2s ease;
+                            flex: 1;
+                        }
+
+                        #mobile-bottom-nav a svg {
+                            width: 22px;
+                            height: 22px;
+                            stroke: currentColor;
+                        }
+
+                        #mobile-bottom-nav a.active,
+                        #mobile-bottom-nav a:hover {
+                            color: #f97316;
+                        }
+
+                        #mobile-bottom-nav a.nav-kasir {
+                            color: #ffffff;
+                            background: #f97316;
+                            border-radius: 16px;
+                            padding: 8px 16px;
+                            margin-bottom: 8px;
+                            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+                        }
+
+                        #mobile-bottom-nav a.nav-kasir svg {
+                            stroke: #ffffff;
+                        }
+
+                        /* Tambah padding bawah konten agar tidak tertutup bottom nav */
+                        .filament-page,
+                        main {
+                            padding-bottom: 80px !important;
+                        }
+                    }
                 </style>
+                
+                <script>
+                    // Inject bottom navigation bar
+                    document.addEventListener("DOMContentLoaded", function() {
+                        if (window.location.pathname.includes("/login")) return;
+
+                        var nav = document.createElement("nav");
+                        nav.id = "mobile-bottom-nav";
+                        nav.innerHTML = `
+                            <a href="/admin" class="nav-home">
+                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                                Dashboard
+                            </a>
+                            <a href="/admin/kasir-cepat" class="nav-kasir-link">
+                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75"/></svg>
+                                Kasir
+                            </a>
+                            <a href="/admin/members" class="nav-member nav-kasir">
+                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                                Member
+                            </a>
+                            <a href="/admin/log-absensi" class="nav-absen">
+                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Absensi
+                            </a>
+                            <a href="#" class="nav-menu" id="bottom-nav-menu-btn">
+                                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+                                Menu
+                            </a>
+                        `;
+
+                        document.body.appendChild(nav);
+
+                        // Set active state
+                        var path = window.location.pathname;
+                        nav.querySelectorAll("a").forEach(function(a) {
+                            if (a.getAttribute("href") === path || (path.startsWith(a.getAttribute("href")) && a.getAttribute("href") !== "/admin")) {
+                                a.classList.add("active");
+                            } else if (a.getAttribute("href") === "/admin" && path === "/admin") {
+                                a.classList.add("active");
+                            }
+                        });
+
+                        // Tombol Menu: toggle sidebar Filament
+                        document.getElementById("bottom-nav-menu-btn").addEventListener("click", function(e) {
+                            e.preventDefault();
+                            var sidebarToggle = document.querySelector(".filament-sidebar-open-button")
+                                || document.querySelector("[x-on:click*=sidebar]")
+                                || document.querySelector("button[x-on:click*=isSidebarOpen]");
+                            if (sidebarToggle) {
+                                sidebarToggle.click();
+                            } else {
+                                window.location.href = "/admin";
+                            }
+                        });
+                    });
+                </script>
                 
                 <script>
                     // JavaScript untuk memaksa bold pada label Fingerprint ID
