@@ -99,16 +99,7 @@ class MemberResource extends Resource
                     //     ->placeholder('Masukkan 16 digit NIK KTP')
                     //     ->unique(ignorable: fn ($record) => $record),
 
-                    Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\TextInput::make('email')
-                            ->email()
-                            ->label('Email')
-                            ->placeholder('Masukkan alamat email')
-                            ->maxLength(254)
-                            ->rules(['max:254', 'regex:/^\S+$/', 'regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/'])
-                            ->unique(ignorable: fn ($record) => $record),
-
-                        Forms\Components\TextInput::make('phone')
+                    Forms\Components\TextInput::make('phone')
                             ->label('WhatsApp')
                             ->numeric()
                             ->placeholder('Masukkan nomor WhatsApp')
@@ -117,7 +108,6 @@ class MemberResource extends Resource
                                 'regex:/^\+?628[0-9]{7,12}$|^08[0-9]{7,12}$|^8[0-9]{8,13}$/',
                             ])
                             ->unique(ignorable: fn ($record) => $record),
-                    ]),
 
                     // Forms\Components\TextInput::make('fingerprint_id')
                     //     ->label('Fingerprint ID')
@@ -723,12 +713,6 @@ class MemberResource extends Resource
                     ->url(fn ($record) => route('member.card.download', $record->id))
                     ->openUrlInNewTab()
                     ->color('primary')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable()
-                    ->default('-')
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 // --- KOLOM STATUS YANG SUDAH DIPERBARUI LOGIKANYA ---

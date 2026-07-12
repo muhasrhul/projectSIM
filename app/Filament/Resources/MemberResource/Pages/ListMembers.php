@@ -21,7 +21,7 @@ class ListMembers extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Tambah Member')
-                ->icon('heroicon-o-plus'),
+                ->icon('heroicon-o-user-add'),
         ];
     }
 }

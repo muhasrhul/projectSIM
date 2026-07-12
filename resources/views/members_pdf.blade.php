@@ -89,15 +89,12 @@
             <tr>
                 <th style="width: 4%; text-align: center;">No</th>
                 <th style="width: 5%; text-align: center;">ID</th>
-                <th style="width: 15%;">Nama</th>
-                <th style="width: 10%;">NIK</th>
-                <th style="width: 8%; text-align: center;">Fingerprint</th>
-                <th style="width: 15%;">Email</th>
-                <th style="width: 10%;">WhatsApp</th>
-                <th style="width: 12%;">Tipe Member</th>
-                <th style="width: 8%; text-align: center;">Bergabung</th>
-                <th style="width: 8%; text-align: center;">Berakhir</th>
-                <th style="width: 8%; text-align: center;">Status</th>
+                <th style="width: 22%;">Nama</th>
+                <th style="width: 15%;">WhatsApp</th>
+                <th style="width: 16%;">Tipe Member</th>
+                <th style="width: 12%; text-align: center;">Bergabung</th>
+                <th style="width: 12%; text-align: center;">Berakhir</th>
+                <th style="width: 14%; text-align: center;">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -134,9 +131,6 @@
                     <td style="text-align: center;">{{ $no++ }}</td>
                     <td style="text-align: center;">{{ $member->id }}</td>
                     <td>{{ $member->name }}</td>
-                    <td>{{ $member->nik ?? '-' }}</td>
-                    <td style="text-align: center;">{{ $member->fingerprint_id ?? '-' }}</td>
-                    <td>{{ $member->email }}</td>
                     <td>{{ $member->phone }}</td>
                     <td>{{ $member->type }}</td>
                     <td style="text-align: center;">

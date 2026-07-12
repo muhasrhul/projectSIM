@@ -65,8 +65,6 @@ class UserResource extends Resource
                     Forms\Components\TextInput::make('phone')
                         ->label('Nomor WhatsApp')
                         ->tel()
-                        ->placeholder('08xxxxxxxxxx atau 628xxxxxxxxxx')
-                        ->helperText('Diperlukan untuk reset password via OTP WhatsApp')
                         ->maxLength(20),
 
                     Forms\Components\Select::make('role')
@@ -74,11 +72,9 @@ class UserResource extends Resource
                         ->options([
                             'super_admin' => 'Super Admin (Akses Penuh)',
                             'admin' => 'Admin (Akses Penuh)',
-                            'user' => 'Staff (Akses Terbatas)',
                         ])
                         ->required()
-                        ->default('user')
-                        ->helperText('Super Admin & Admin: Akses penuh. Staff: Hanya bisa lihat data.'),
+                        ->default('admin'),
 
                     Forms\Components\TextInput::make('password')
                         ->label('Password')
@@ -118,17 +114,14 @@ class UserResource extends Resource
                     ->colors([
                         'danger' => 'super_admin',
                         'warning' => 'admin',
-                        'success' => 'user',
                     ])
                     ->icons([
                         'heroicon-o-shield-exclamation' => 'super_admin',
                         'heroicon-o-shield-check' => 'admin',
-                        'heroicon-o-user' => 'user',
                     ])
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'super_admin' => 'Super Admin',
                         'admin' => 'Admin',
-                        'user' => 'Staff',
                         default => $state,
                     }),
 
@@ -144,7 +137,6 @@ class UserResource extends Resource
                     ->options([
                         'super_admin' => 'Super Admin',
                         'admin' => 'Admin',
-                        'user' => 'Staff',
                     ]),
             ])
             ->actions([
