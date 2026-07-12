@@ -108,3 +108,21 @@
 .dark [x-data*="dropdown"] > div:not(.filament-user-menu *):not([x-data*="userMenu"] *) .filament-dropdown-list-item * {
     color: rgb(229 231 235) !important;
 }
+
+/* Override warna tombol primary (Masuk) ke orange */
+.filament-button[type="submit"],
+button[type="submit"].filament-button,
+.filament-login-page button[type="submit"],
+button.filament-button.bg-primary-600,
+.bg-primary-600 {
+    background-color: #f97316 !important;
+    border-color: #f97316 !important;
+}
+
+.filament-button[type="submit"]:hover,
+button[type="submit"].filament-button:hover,
+.bg-primary-600:hover,
+.hover\:bg-primary-500:hover {
+    background-color: #ea6c0a !important;
+    border-color: #ea6c0a !important;
+}
