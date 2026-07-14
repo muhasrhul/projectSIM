@@ -692,6 +692,12 @@ class AppServiceProvider extends ServiceProvider
                             stroke: #ffffff;
                         }
 
+                        /* Sembunyikan bottom nav saat sidebar terbuka */
+                        .filament-sidebar-open #mobile-bottom-nav,
+                        body.sidebar-open #mobile-bottom-nav {
+                            display: none !important;
+                        }
+
                         /* Tambah padding bawah konten agar tidak tertutup bottom nav */
                         .filament-page,
                         main {
@@ -731,6 +737,26 @@ class AppServiceProvider extends ServiceProvider
                         `;
 
                         document.body.appendChild(nav);
+
+                        // Sembunyikan bottom nav saat sidebar terbuka
+                        function handleSidebarState() {
+                            var sidebar = document.querySelector(".filament-sidebar");
+                            var nav = document.getElementById("mobile-bottom-nav");
+                            if (!sidebar || !nav) return;
+
+                            var observer = new MutationObserver(function() {
+                                var isOpen = sidebar.classList.contains("filament-sidebar-open") 
+                                    || document.body.classList.contains("filament-sidebar-open")
+                                    || sidebar.style.transform === "translateX(0px)"
+                                    || !sidebar.classList.contains("-translate-x-full");
+                                nav.style.display = isOpen ? "none" : "flex";
+                            });
+
+                            observer.observe(sidebar, { attributes: true, attributeFilter: ["class", "style"] });
+                            observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+                        }
+
+                        setTimeout(handleSidebarState, 500);
 
                         // Set active state
                         var path = window.location.pathname;
