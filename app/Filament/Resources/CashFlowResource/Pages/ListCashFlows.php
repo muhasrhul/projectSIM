@@ -154,7 +154,8 @@ class ListCashFlows extends ListRecords
                         ]));
                     }
                     return redirect()->to(route('export.pembukuan', ['period' => $data['period']]));
-                }),
+                })
+                ->modalButton('Unduh'),
         ];
     }
 
