@@ -1007,6 +1007,35 @@ Route::middleware(['auth'])->get('/export/pembukuan', function (Request $request
         $endDate = $data->last()->date ?? $now;
     }
     
+    // Jika format CSV
+    if ($request->get('format') === 'csv') {
+        $filename = 'Laporan_Arus_Kas_' . str_replace(' ', '_', $periodLabel) . '_' . date('d-m-Y') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function() use ($dataWithBalance) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
+            fputcsv($file, ['Tanggal', 'Tipe', 'Keterangan', 'Pemasukan', 'Pengeluaran', 'Saldo']);
+            foreach ($dataWithBalance as $row) {
+                fputcsv($file, [
+                    \Carbon\Carbon::parse($row->date)->format('d/m/Y H:i'),
+                    $row->type === 'income' ? 'Pemasukan' : 'Pengeluaran',
+                    $row->description ?? '-',
+                    $row->type === 'income' ? $row->amount : 0,
+                    $row->type === 'expense' ? $row->amount : 0,
+                    $row->running_balance,
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     return view('laporan_pembukuan_pdf', [
         'data' => $dataWithBalance,
         'periodLabel' => $periodLabel,

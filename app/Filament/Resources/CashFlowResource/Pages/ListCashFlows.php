@@ -122,6 +122,15 @@ class ListCashFlows extends ListRecords
                 ->icon('heroicon-o-printer')
                 ->color('warning')
                 ->form([
+                    \Filament\Forms\Components\Select::make('format')
+                        ->label('Format')
+                        ->options([
+                            'pdf' => 'PDF',
+                            'csv' => 'CSV',
+                        ])
+                        ->default('pdf')
+                        ->required(),
+
                     \Filament\Forms\Components\Select::make('period')
                         ->label('Pilih Periode Laporan')
                         ->options(function () {
@@ -138,6 +147,12 @@ class ListCashFlows extends ListRecords
                         ->required(),
                 ])
                 ->action(function (array $data) {
+                    if ($data['format'] === 'csv') {
+                        return redirect()->to(route('export.pembukuan', [
+                            'period' => $data['period'],
+                            'format' => 'csv',
+                        ]));
+                    }
                     return redirect()->to(route('export.pembukuan', ['period' => $data['period']]));
                 }),
         ];
