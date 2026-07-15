@@ -28,7 +28,6 @@ class KategoriPengeluaranChart extends ChartWidget
     {
         $this->filterMonth = $month;
         $this->filterYear  = $year;
-        $this->updateChartData();
     }
 
     protected function getMaxHeight(): ?string
