@@ -10,8 +10,9 @@ use Filament\Notifications\Notification;
 
 class KasirCepat extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-lightning-bolt';
-    protected static ?string $title = 'Kasir Cepat & Kantin';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-list';
+    protected static ?string $title = 'Kasir Penjualan';
+    protected static ?string $navigationLabel = 'Kasir Penjualan';
     protected static string $view = 'filament.pages.kasir-cepat';
 
     // PERMISSION: Semua role bisa akses (ini untuk kasir)

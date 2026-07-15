@@ -16,8 +16,8 @@ class QuickTransactionResource extends Resource
     protected static ?string $model = QuickTransaction::class;
     protected static ?string $navigationIcon = 'heroicon-o-cash';
     protected static ?int $navigationSort = 2; // Urutan kedua
-    protected static ?string $navigationLabel = 'Transaksi Kasir Cepat';
-    protected static ?string $pluralLabel = 'Transaksi Kasir Cepat';
+    protected static ?string $navigationLabel = 'Transaksi Kasir';
+    protected static ?string $pluralLabel = 'Transaksi Kasir';
     protected static ?string $navigationGroup = 'Transaksi';
     
     // PERMISSION: Hanya Super Admin yang bisa akses
