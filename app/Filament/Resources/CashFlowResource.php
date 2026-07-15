@@ -24,13 +24,13 @@ class CashFlowResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calculator';
     
-    protected static ?string $navigationLabel = 'Laporan Arus Kas';
+    protected static ?string $navigationLabel = 'Analisis Laporan';
     
-    protected static ?string $modelLabel = 'Laporan Arus Kas';
+    protected static ?string $modelLabel = 'Analisis Laporan';
     
     protected static ?string $pluralModelLabel = 'Pembukuan';
     
-    protected static ?string $navigationGroup = 'Keuangan';
+    protected static ?string $navigationGroup = 'Laporan';
     
     protected static ?int $navigationSort = 1;
 

@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Filament\Resources\CashFlowResource\Widgets;
+
+use App\Models\Transaction;
+use App\Models\CashFlow;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Card;
+use Carbon\Carbon;
+
+class LaporanStats extends BaseWidget
+{
+    protected static bool $isLazy = true;
+    protected int | string | array $columnSpan = 'full';
+
+    public string $filterMonth = '';
+    public string $filterYear = '';
+
+    protected $listeners = ['filterUpdated' => 'updateFilter'];
+
+    public function mount(): void
+    {
+        $now = Carbon::now('Asia/Makassar');
+        $this->filterMonth = (string) $now->month;
+        $this->filterYear  = (string) $now->year;
+    }
+
+    public function updateFilter(string $month, string $year): void
+    {
+        $this->filterMonth = $month;
+        $this->filterYear  = $year;
+    }
+
+    protected function getColumns(): int
+    {
+        return 4;
+    }
+
+    protected function getCards(): array
+    {
+        $month = $this->filterMonth;
+        $year  = $this->filterYear;
+        $label = Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y');
+
+        $totalPemasukan = CashFlow::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->where('type', 'income')
+            ->sum('amount');
+
+        $totalPengeluaran = CashFlow::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->where('type', 'expense')
+            ->sum('amount');
+
+        $pendapatanBersih = $totalPemasukan - $totalPengeluaran;
+
+        $jumlahTransaksi = Transaction::whereMonth('payment_date', $month)
+            ->whereYear('payment_date', $year)
+            ->count();
+
+        $rataRata = $jumlahTransaksi > 0 ? $pendapatanBersih / $jumlahTransaksi : 0;
+
+        return [
+            Card::make('Total Pendapatan ' . $label, 'Rp ' . number_format($pendapatanBersih, 0, ',', '.'))
+                ->description('Pendapatan bersih')
+                ->descriptionIcon('heroicon-s-calculator')
+                ->color($pendapatanBersih >= 0 ? 'success' : 'danger'),
+
+            Card::make('Total Pengeluaran ' . $label, 'Rp ' . number_format($totalPengeluaran, 0, ',', '.'))
+                ->description('Total biaya operasional')
+                ->descriptionIcon('heroicon-s-trending-down')
+                ->color('danger'),
+
+            Card::make('Jumlah Transaksi', $jumlahTransaksi . ' Transaksi')
+                ->description('Total transaksi ' . $label)
+                ->descriptionIcon('heroicon-s-clipboard-list')
+                ->color('primary'),
+
+            Card::make('Rata-rata / Transaksi', 'Rp ' . number_format($rataRata, 0, ',', '.'))
+                ->description('Rata-rata nilai per transaksi')
+                ->descriptionIcon('heroicon-s-trending-up')
+                ->color('warning'),
+        ];
+    }
+}

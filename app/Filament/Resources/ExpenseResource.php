@@ -18,7 +18,7 @@ class ExpenseResource extends Resource
     protected static ?int $navigationSort = 3; // Urutan ketiga
     protected static ?string $navigationLabel = 'Catatan Pengeluaran';
     protected static ?string $pluralLabel = 'Catatan Pengeluaran';
-    protected static ?string $navigationGroup = 'Keuangan';
+    protected static ?string $navigationGroup = 'Transaksi';
     
     // PERMISSION: Staff hanya bisa lihat, tidak bisa create/edit/delete
     public static function canCreate(): bool

@@ -58,7 +58,8 @@ class AppServiceProvider extends ServiceProvider
 
             // 2. ATUR URUTAN GRUP NAVIGASI
             Filament::registerNavigationGroups([
-                'Keuangan',
+                'Transaksi',
+                'Laporan',
                 'Master Data', 
                 'Sistem',
                 'Pengaturan',

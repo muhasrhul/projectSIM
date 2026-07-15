@@ -1018,3 +1018,38 @@ Route::middleware(['auth'])->get('/export/pembukuan', function (Request $request
         'generatedAt' => $now->format('d F Y, H:i') . ' WITA'
     ]);
 })->name('export.pembukuan');
+
+// Data chart laporan arus kas
+Route::get('/admin/laporan-arus-kas-data', function (\Illuminate\Http\Request $request) {
+    $month = $request->get('month', \Carbon\Carbon::now()->month);
+    $year  = $request->get('year',  \Carbon\Carbon::now()->year);
+
+    $startDate = \Carbon\Carbon::createFromDate($year, $month, 1)->startOfMonth();
+    $endDate   = \Carbon\Carbon::createFromDate($year, $month, 1)->endOfMonth();
+    $now       = \Carbon\Carbon::now('Asia/Makassar');
+
+    $pemasukan   = \App\Models\CashFlow::selectRaw('DATE(date) as tgl, SUM(amount) as total')
+        ->whereMonth('date', $month)->whereYear('date', $year)->where('type', 'income')
+        ->groupByRaw('DATE(date)')->pluck('total', 'tgl');
+
+    $pengeluaran = \App\Models\CashFlow::selectRaw('DATE(date) as tgl, SUM(amount) as total')
+        ->whereMonth('date', $month)->whereYear('date', $year)->where('type', 'expense')
+        ->groupByRaw('DATE(date)')->pluck('total', 'tgl');
+
+    $labels = []; $dataPemasukan = []; $dataPengeluaran = [];
+    $current = $startDate->copy();
+    while ($current <= $endDate) {
+        $key = $current->format('Y-m-d');
+        $isFuture = $current->gt($now);
+        $labels[]          = $current->format('d');
+        $dataPemasukan[]   = $isFuture ? null : ($pemasukan[$key] ?? 0);
+        $dataPengeluaran[] = $isFuture ? null : ($pengeluaran[$key] ?? 0);
+        $current->addDay();
+    }
+
+    return response()->json([
+        'labels'      => $labels,
+        'pemasukan'   => $dataPemasukan,
+        'pengeluaran' => $dataPengeluaran,
+    ]);
+})->middleware('auth')->name('laporan.arus-kas.data');

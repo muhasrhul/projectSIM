@@ -18,7 +18,7 @@ class QuickTransactionResource extends Resource
     protected static ?int $navigationSort = 2; // Urutan kedua
     protected static ?string $navigationLabel = 'Transaksi Kasir Cepat';
     protected static ?string $pluralLabel = 'Transaksi Kasir Cepat';
-    protected static ?string $navigationGroup = 'Keuangan';
+    protected static ?string $navigationGroup = 'Transaksi';
     
     // PERMISSION: Hanya Super Admin yang bisa akses
     public static function canViewAny(): bool

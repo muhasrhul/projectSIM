@@ -22,7 +22,7 @@ class TransactionResource extends Resource
     protected static ?int $navigationSort = 1; // Urutan pertama
     protected static ?string $navigationLabel = 'Transaksi Membership';
     protected static ?string $pluralLabel = 'Transaksi Membership';
-    protected static ?string $navigationGroup = 'Keuangan';
+    protected static ?string $navigationGroup = 'Transaksi';
     
     // PERMISSION: Hanya Super Admin yang bisa akses
     public static function canViewAny(): bool
