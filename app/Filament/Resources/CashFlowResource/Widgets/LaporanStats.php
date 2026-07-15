@@ -20,9 +20,8 @@ class LaporanStats extends BaseWidget
 
     public function mount(): void
     {
-        $now = Carbon::now('Asia/Makassar');
-        $this->filterMonth = (string) $now->month;
-        $this->filterYear  = (string) $now->year;
+        $this->filterMonth = '';
+        $this->filterYear  = '';
     }
 
     public function updateFilter(string $month, string $year): void
@@ -40,25 +39,29 @@ class LaporanStats extends BaseWidget
     {
         $month = $this->filterMonth;
         $year  = $this->filterYear;
-        $label = Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y');
+        $label = ($month && $year) 
+            ? Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y')
+            : 'Semua Waktu';
 
-        $totalPemasukan = CashFlow::whereMonth('date', $month)
-            ->whereYear('date', $year)
-            ->where('type', 'income')
-            ->sum('amount');
+        $pemasukanQuery   = CashFlow::where('type', 'income');
+        $pengeluaranQuery = CashFlow::where('type', 'expense');
+        $transaksiQuery = CashFlow::query();
 
-        $totalPengeluaran = CashFlow::whereMonth('date', $month)
-            ->whereYear('date', $year)
-            ->where('type', 'expense')
-            ->sum('amount');
+        if ($month && $year) {
+            $pemasukanQuery->whereMonth('date', $month)->whereYear('date', $year);
+            $pengeluaranQuery->whereMonth('date', $month)->whereYear('date', $year);
+            $transaksiQuery->whereMonth('date', $month)->whereYear('date', $year);
+        } elseif ($year) {
+            $pemasukanQuery->whereYear('date', $year);
+            $pengeluaranQuery->whereYear('date', $year);
+            $transaksiQuery->whereYear('date', $year);
+        }
 
+        $totalPemasukan   = $pemasukanQuery->sum('amount');
+        $totalPengeluaran = $pengeluaranQuery->sum('amount');
         $pendapatanBersih = $totalPemasukan - $totalPengeluaran;
-
-        $jumlahTransaksi = Transaction::whereMonth('payment_date', $month)
-            ->whereYear('payment_date', $year)
-            ->count();
-
-        $rataRata = $jumlahTransaksi > 0 ? $pendapatanBersih / $jumlahTransaksi : 0;
+        $jumlahTransaksi  = $transaksiQuery->count();
+        $rataRata         = $jumlahTransaksi > 0 ? $pendapatanBersih / $jumlahTransaksi : 0;
 
         return [
             Card::make('Total Pendapatan ' . $label, 'Rp ' . number_format($pendapatanBersih, 0, ',', '.'))

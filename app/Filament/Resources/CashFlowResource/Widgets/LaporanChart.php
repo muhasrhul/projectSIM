@@ -29,7 +29,7 @@ class LaporanChart extends LineChartWidget
 
     public function applyFilter(string $month, string $year): void
     {
-        $this->filter = $month . '-' . $year;
+        $this->filter = ($month && $year) ? $month . '-' . $year : 'all';
         $this->updateChartData();
     }
 
@@ -37,37 +37,54 @@ class LaporanChart extends LineChartWidget
     {
         $now = Carbon::now('Asia/Makassar');
 
-        if ($this->filter && str_contains($this->filter, '-')) {
-            [$month, $year] = explode('-', $this->filter);
+        // Mode semua waktu — tampilkan per bulan
+        if (!$this->filter || $this->filter === 'all') {
+            $pemasukan = CashFlow::selectRaw('DATE_FORMAT(date, "%Y-%m") as bulan, SUM(amount) as total')
+                ->where('type', 'income')->groupByRaw('DATE_FORMAT(date, "%Y-%m")')
+                ->orderBy('bulan')->pluck('total', 'bulan');
+
+            $pengeluaran = CashFlow::selectRaw('DATE_FORMAT(date, "%Y-%m") as bulan, SUM(amount) as total')
+                ->where('type', 'expense')->groupByRaw('DATE_FORMAT(date, "%Y-%m")')
+                ->orderBy('bulan')->pluck('total', 'bulan');
+
+            $allKeys = collect($pemasukan->keys())->merge($pengeluaran->keys())->unique()->sort()->values();
+            $labels = []; $dataPemasukan = []; $dataPengeluaran = [];
+            foreach ($allKeys as $key) {
+                $labels[]          = Carbon::parse($key . '-01')->translatedFormat('M Y');
+                $dataPemasukan[]   = (float)($pemasukan[$key] ?? 0);
+                $dataPengeluaran[] = (float)($pengeluaran[$key] ?? 0);
+            }
         } else {
-            $month = $now->month;
-            $year  = $now->year;
-        }
+            if (str_contains($this->filter, '-')) {
+                [$month, $year] = explode('-', $this->filter);
+            } else {
+                $month = $now->month;
+                $year  = $now->year;
+            }
 
-        $month = (int) $month;
-        $year  = (int) $year;
+            $month = (int) $month;
+            $year  = (int) $year;
+            $startDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
+            $endDate   = Carbon::createFromDate($year, $month, 1)->endOfMonth();
 
-        $startDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
-        $endDate   = Carbon::createFromDate($year, $month, 1)->endOfMonth();
+            $pemasukan   = CashFlow::selectRaw('DATE(date) as tgl, SUM(amount) as total')
+                ->whereMonth('date', $month)->whereYear('date', $year)->where('type', 'income')
+                ->groupByRaw('DATE(date)')->pluck('total', 'tgl');
 
-        $pemasukan   = CashFlow::selectRaw('DATE(date) as tgl, SUM(amount) as total')
-            ->whereMonth('date', $month)->whereYear('date', $year)->where('type', 'income')
-            ->groupByRaw('DATE(date)')->pluck('total', 'tgl');
+            $pengeluaran = CashFlow::selectRaw('DATE(date) as tgl, SUM(amount) as total')
+                ->whereMonth('date', $month)->whereYear('date', $year)->where('type', 'expense')
+                ->groupByRaw('DATE(date)')->pluck('total', 'tgl');
 
-        $pengeluaran = CashFlow::selectRaw('DATE(date) as tgl, SUM(amount) as total')
-            ->whereMonth('date', $month)->whereYear('date', $year)->where('type', 'expense')
-            ->groupByRaw('DATE(date)')->pluck('total', 'tgl');
-
-        $labels = []; $dataPemasukan = []; $dataPengeluaran = [];
-        $current = $startDate->copy();
-
-        while ($current <= $endDate) {
-            $key = $current->format('Y-m-d');
-            $isFuture = $current->gt($now);
-            $labels[]          = $current->format('d');
-            $dataPemasukan[]   = $isFuture ? null : (float)($pemasukan[$key] ?? 0);
-            $dataPengeluaran[] = $isFuture ? null : (float)($pengeluaran[$key] ?? 0);
-            $current->addDay();
+            $labels = []; $dataPemasukan = []; $dataPengeluaran = [];
+            $current = $startDate->copy();
+            while ($current <= $endDate) {
+                $key = $current->format('Y-m-d');
+                $isFuture = $current->gt($now);
+                $labels[]          = $current->format('d');
+                $dataPemasukan[]   = $isFuture ? null : (float)($pemasukan[$key] ?? 0);
+                $dataPengeluaran[] = $isFuture ? null : (float)($pengeluaran[$key] ?? 0);
+                $current->addDay();
+            }
         }
 
         return [
@@ -75,8 +92,8 @@ class LaporanChart extends LineChartWidget
                 [
                     'label'           => 'Pemasukan',
                     'data'            => $dataPemasukan,
-                    'borderColor'     => '#10b981',
-                    'backgroundColor' => 'rgba(16, 185, 129, 0.08)',
+                    'borderColor'     => 'rgba(245, 158, 11, 1)',
+                    'backgroundColor' => 'rgba(245, 158, 11, 0.15)',
                     'fill'            => true,
                     'tension'         => 0.4,
                     'pointRadius'     => 3,
@@ -84,8 +101,8 @@ class LaporanChart extends LineChartWidget
                 [
                     'label'           => 'Pengeluaran',
                     'data'            => $dataPengeluaran,
-                    'borderColor'     => '#ef4444',
-                    'backgroundColor' => 'rgba(239, 68, 68, 0.08)',
+                    'borderColor'     => 'rgba(245, 158, 11, 0.65)',
+                    'backgroundColor' => 'rgba(245, 158, 11, 0.08)',
                     'fill'            => true,
                     'tension'         => 0.4,
                     'pointRadius'     => 3,

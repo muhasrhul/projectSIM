@@ -20,7 +20,7 @@ class ListQuickTransactions extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Tambah Transaksi Cepat')
+                ->label('Tambah Transaksi')
                 ->icon('heroicon-o-plus-circle'),
         ];
     }

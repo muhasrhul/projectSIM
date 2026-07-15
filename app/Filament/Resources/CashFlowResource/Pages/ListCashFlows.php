@@ -12,17 +12,17 @@ class ListCashFlows extends ListRecords
 {
     protected static string $resource = CashFlowResource::class;
 
-    public string $filterMonth;
-    public string $filterYear;
+    public string $filterMonth = '';
+    public string $filterYear = '';
 
     protected $listeners = ['filterUpdated' => 'updateFilter'];
 
     public function mount($record = null): void
     {
         parent::mount($record);
-        $now = Carbon::now('Asia/Makassar');
-        $this->filterMonth = (string) $now->month;
-        $this->filterYear  = (string) $now->year;
+        // Default: semua waktu (kosong)
+        $this->filterMonth = '';
+        $this->filterYear  = '';
     }
 
     public function updatedFilterMonth(): void
@@ -90,7 +90,9 @@ class ListCashFlows extends ListRecords
         
         return [
             Actions\Action::make('filter_periode')
-                ->label($this->getMonthOptions()[$this->filterMonth] . ' ' . $this->filterYear)
+                ->label(fn() => ($this->filterMonth && $this->filterYear) 
+                    ? $this->getMonthOptions()[$this->filterMonth] . ' ' . $this->filterYear 
+                    : 'Semua Waktu')
                 ->icon('heroicon-o-calendar')
                 ->color('secondary')
                 ->modalWidth('sm')
@@ -99,22 +101,24 @@ class ListCashFlows extends ListRecords
                 ->form([
                     \Filament\Forms\Components\Select::make('filterMonth')
                         ->label('Bulan')
-                        ->options($this->getMonthOptions())
-                        ->default($this->filterMonth)
+                        ->options(['all' => 'Semua Waktu'] + $this->getMonthOptions())
+                        ->default($this->filterMonth ?: 'all')
                         ->searchable()
                         ->required(),
 
                     \Filament\Forms\Components\Select::make('filterYear')
                         ->label('Tahun')
-                        ->options($this->getYearOptions())
-                        ->default($this->filterYear)
+                        ->options(['all' => 'Semua Tahun'] + $this->getYearOptions())
+                        ->default($this->filterYear ?: 'all')
+                        ->searchable()
                         ->required(),
                 ])
                 ->modalButton('Terapkan Filter')
                 ->action(function (array $data): void {
-                    $this->filterMonth = $data['filterMonth'];
-                    $this->filterYear  = $data['filterYear'];
+                    $this->filterMonth = $data['filterMonth'] === 'all' ? '' : $data['filterMonth'];
+                    $this->filterYear  = $data['filterYear'] === 'all' ? '' : $data['filterYear'];
                     $this->emit('filterUpdated', $this->filterMonth, $this->filterYear);
+                    $this->dispatchBrowserEvent('filter-updated', ['month' => $this->filterMonth, 'year' => $this->filterYear]);
                 }),
 
             Actions\Action::make('export_pdf')
@@ -159,22 +163,37 @@ class ListCashFlows extends ListRecords
         ];
     }
 
+    protected function getHeaderWidgetsColumns(): int | array
+    {
+        return 2;
+    }
+
     protected function getHeaderWidgets(): array
     {
         return [
             \App\Filament\Resources\CashFlowResource\Widgets\HeaderWidget::class,
             \App\Filament\Resources\CashFlowResource\Widgets\LaporanStats::class,
             \App\Filament\Resources\CashFlowResource\Widgets\LaporanChart::class,
+            \App\Filament\Resources\CashFlowResource\Widgets\KategoriPengeluaranChart::class,
+            \App\Filament\Resources\CashFlowResource\Widgets\ProdukChart::class,
+            \App\Filament\Resources\CashFlowResource\Widgets\PaketMembershipChart::class,
         ];
     }
 
     protected function getTableQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return parent::getTableQuery()
-            ->whereMonth('date', $this->filterMonth)
-            ->whereYear('date', $this->filterYear)
+        $query = parent::getTableQuery()
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc');
+
+        if ($this->filterMonth && $this->filterYear) {
+            $query->whereMonth('date', $this->filterMonth)
+                  ->whereYear('date', $this->filterYear);
+        } elseif ($this->filterYear) {
+            $query->whereYear('date', $this->filterYear);
+        }
+
+        return $query;
     }
 
     protected function getTableFilters(): array
