@@ -19,7 +19,15 @@ class MemberPerBulanChart extends LineChartWidget
 
     public function applyFilter(string $month, string $year): void
     {
-        $this->filter = ($month && $year) ? $month . '-' . $year : 'all';
+        if ($month && $year) {
+            $this->filter = $month . '-' . $year;
+        } elseif ($year) {
+            $this->filter = 'year-' . $year;
+        } elseif ($month) {
+            $this->filter = 'month-' . $month;
+        } else {
+            $this->filter = 'all';
+        }
         $this->updateChartData();
     }
 
@@ -40,9 +48,15 @@ class MemberPerBulanChart extends LineChartWidget
             ->groupByRaw('MONTH(join_date)')
             ->orderByRaw('MONTH(join_date)');
 
-        // Parse filter - jika ada filter tahun
+        // Parse filter
         if ($this->filter && $this->filter !== 'all') {
-            if (str_contains($this->filter, '-')) {
+            if (str_starts_with($this->filter, 'year-')) {
+                $year = str_replace('year-', '', $this->filter);
+                $query->whereYear('join_date', $year);
+            } elseif (str_starts_with($this->filter, 'month-')) {
+                $month = str_replace('month-', '', $this->filter);
+                $query->whereMonth('join_date', $month);
+            } elseif (str_contains($this->filter, '-')) {
                 [$month, $year] = explode('-', $this->filter);
                 $query->whereYear('join_date', $year);
             }

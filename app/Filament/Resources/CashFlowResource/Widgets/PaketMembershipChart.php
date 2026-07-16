@@ -19,7 +19,15 @@ class PaketMembershipChart extends LineChartWidget
 
     public function applyFilter(string $month, string $year): void
     {
-        $this->filter = ($month && $year) ? $month . '-' . $year : 'all';
+        if ($month && $year) {
+            $this->filter = $month . '-' . $year;
+        } elseif ($year) {
+            $this->filter = 'year-' . $year;
+        } elseif ($month) {
+            $this->filter = 'month-' . $month;
+        } else {
+            $this->filter = 'all';
+        }
         $this->updateChartData();
     }
 
@@ -42,7 +50,13 @@ class PaketMembershipChart extends LineChartWidget
 
         // Parse filter
         if ($this->filter && $this->filter !== 'all') {
-            if (str_contains($this->filter, '-')) {
+            if (str_starts_with($this->filter, 'year-')) {
+                $year = str_replace('year-', '', $this->filter);
+                $query->whereYear('created_at', $year);
+            } elseif (str_starts_with($this->filter, 'month-')) {
+                $month = str_replace('month-', '', $this->filter);
+                $query->whereMonth('created_at', $month);
+            } elseif (str_contains($this->filter, '-')) {
                 [$month, $year] = explode('-', $this->filter);
                 $query->whereMonth('created_at', $month)
                       ->whereYear('created_at', $year);

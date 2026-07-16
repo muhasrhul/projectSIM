@@ -193,10 +193,15 @@ class ListCashFlows extends ListRecords
             ->orderBy('id', 'desc');
 
         if ($this->filterMonth && $this->filterYear) {
+            // Filter by bulan + tahun
             $query->whereMonth('date', $this->filterMonth)
                   ->whereYear('date', $this->filterYear);
         } elseif ($this->filterYear) {
+            // Filter by tahun saja
             $query->whereYear('date', $this->filterYear);
+        } elseif ($this->filterMonth) {
+            // Filter by bulan saja (semua tahun)
+            $query->whereMonth('date', $this->filterMonth);
         }
 
         return $query;

@@ -39,9 +39,22 @@ class LaporanStats extends BaseWidget
     {
         $month = $this->filterMonth;
         $year  = $this->filterYear;
-        $label = ($month && $year) 
-            ? Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y')
-            : 'Semua Waktu';
+        
+        if ($month && $year) {
+            $label = Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y');
+        } elseif ($year) {
+            $label = 'Tahun ' . $year;
+        } elseif ($month) {
+            $monthNames = [
+                '1' => 'Januari', '2' => 'Februari', '3' => 'Maret',
+                '4' => 'April', '5' => 'Mei', '6' => 'Juni',
+                '7' => 'Juli', '8' => 'Agustus', '9' => 'September',
+                '10' => 'Oktober', '11' => 'November', '12' => 'Desember',
+            ];
+            $label = 'Bulan ' . $monthNames[$month] . ' (Semua Tahun)';
+        } else {
+            $label = 'Semua Waktu';
+        }
 
         $pemasukanQuery   = CashFlow::where('type', 'income');
         $pengeluaranQuery = CashFlow::where('type', 'expense');
@@ -55,6 +68,11 @@ class LaporanStats extends BaseWidget
             $pemasukanQuery->whereYear('date', $year);
             $pengeluaranQuery->whereYear('date', $year);
             $transaksiQuery->whereYear('date', $year);
+        } elseif ($month) {
+            // Filter bulan saja (semua tahun)
+            $pemasukanQuery->whereMonth('date', $month);
+            $pengeluaranQuery->whereMonth('date', $month);
+            $transaksiQuery->whereMonth('date', $month);
         }
 
         $totalPemasukan   = $pemasukanQuery->sum('amount');
