@@ -6,9 +6,9 @@ use Filament\Widgets\LineChartWidget;
 use App\Models\Member;
 use Carbon\Carbon;
 
-class PaketMembershipChart extends LineChartWidget
+class MemberPerBulanChart extends LineChartWidget
 {
-    protected static ?string $heading = 'Perbandingan Paket Membership';
+    protected static ?string $heading = 'Perbandingan Member Berdasarkan Bulan';
     protected static bool $isLazy = false;
     protected int | string | array $columnSpan = 'full';
     protected static ?string $pollingInterval = null;
@@ -25,7 +25,7 @@ class PaketMembershipChart extends LineChartWidget
 
     protected function getMaxHeight(): ?string
     {
-        return '280px';
+        return '300px';
     }
 
     protected function getFilters(): ?array
@@ -35,43 +35,49 @@ class PaketMembershipChart extends LineChartWidget
 
     protected function getData(): array
     {
-        $query = Member::selectRaw('type, COUNT(*) as total')
-            ->whereNotNull('type')
-            ->groupBy('type')
-            ->orderByDesc('total');
+        $query = Member::selectRaw('MONTH(join_date) as month, COUNT(*) as total')
+            ->whereNotNull('join_date')
+            ->groupByRaw('MONTH(join_date)')
+            ->orderByRaw('MONTH(join_date)');
 
-        // Parse filter
+        // Parse filter - jika ada filter tahun
         if ($this->filter && $this->filter !== 'all') {
             if (str_contains($this->filter, '-')) {
                 [$month, $year] = explode('-', $this->filter);
-                $query->whereMonth('created_at', $month)
-                      ->whereYear('created_at', $year);
+                $query->whereYear('join_date', $year);
             }
         }
 
-        $data  = $query->get();
-        $count = $data->count();
+        $data = $query->get();
 
-        $colors = $data->map(function($item, $i) use ($count) {
-            $opacity = round(0.9 - ($i * 0.6 / max($count - 1, 1)), 2);
-            return "rgba(245, 158, 11, {$opacity})";
-        })->toArray();
+        // Buat array untuk semua bulan (1-12)
+        $monthlyData = array_fill(1, 12, 0);
+        
+        foreach ($data as $item) {
+            $monthlyData[$item->month] = (int)$item->total;
+        }
+
+        $labels = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+            'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'
+        ];
+
+        $values = array_values($monthlyData);
 
         return [
             'datasets' => [[
                 'label'           => 'Jumlah Member',
-                'data'            => $data->pluck('total')->map(fn($v) => (int)$v)->toArray(),
-                'backgroundColor' => $colors,
-                'borderRadius'    => 6,
-                'borderWidth'     => 0,
+                'data'            => $values,
+                'backgroundColor' => 'rgba(245, 158, 11, 0.2)',
+                'borderColor'     => '#F59E0B',
+                'borderWidth'     => 2,
+                'fill'            => true,
+                'tension'         => 0.4,
+                'pointRadius'     => 4,
+                'pointHoverRadius' => 6,
             ]],
-            'labels' => $data->pluck('type')->toArray(),
+            'labels' => $labels,
         ];
-    }
-
-    public function getType(): string
-    {
-        return 'bar';
     }
 
     protected function getOptions(): array
@@ -84,13 +90,11 @@ class PaketMembershipChart extends LineChartWidget
             ],
             'scales' => [
                 'y' => [
-                    'type' => 'logarithmic',
-                    'ticks' => [
-                        'callback' => 'function(value) { return Number.isInteger(Math.log10(value)) ? value : null; }',
-                    ],
+                    'beginAtZero' => true,
+                    'ticks' => ['stepSize' => 1],
                 ],
                 'x' => [
-                    'ticks' => ['font' => ['size' => 11]],
+                    'grid' => ['display' => false],
                 ],
             ],
         ];

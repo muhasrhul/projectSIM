@@ -2,32 +2,25 @@
 
 namespace App\Filament\Resources\CashFlowResource\Widgets;
 
-use Filament\Widgets\ChartWidget;
+use Filament\Widgets\LineChartWidget;
 use App\Models\QuickTransaction;
 use Carbon\Carbon;
 
-class ProdukChart extends ChartWidget
+class ProdukChart extends LineChartWidget
 {
     protected static ?string $heading = 'Perbandingan Produk Terlaris';
-    protected static bool $isLazy = true;
+    protected static bool $isLazy = false;
     protected int | string | array $columnSpan = 1;
     protected static ?string $pollingInterval = null;
 
-    public string $filterMonth = '';
-    public string $filterYear = '';
+    public ?string $filter = null;
 
-    protected $listeners = ['filterUpdated' => 'updateFilter'];
+    protected $listeners = ['filterUpdated' => 'applyFilter'];
 
-    public function mount(): void
+    public function applyFilter(string $month, string $year): void
     {
-        $this->filterMonth = '';
-        $this->filterYear  = '';
-    }
-
-    public function updateFilter(string $month, string $year): void
-    {
-        $this->filterMonth = $month;
-        $this->filterYear  = $year;
+        $this->filter = ($month && $year) ? $month . '-' . $year : 'all';
+        $this->updateChartData();
     }
 
     protected function getMaxHeight(): ?string
@@ -35,21 +28,28 @@ class ProdukChart extends ChartWidget
         return '300px';
     }
 
+    protected function getFilters(): ?array
+    {
+        return null;
+    }
+
     protected function getData(): array
     {
-        $query = QuickTransaction::selectRaw("TRIM(REGEXP_REPLACE(product_name, ' \\\\(\\\\d+x\\\\)$', '')) as clean_name, SUM(1) as total")
+        $query = QuickTransaction::selectRaw("TRIM(REGEXP_REPLACE(product_name, ' \\\\(\\\\d+x\\\\)', '')) as clean_name, SUM(1) as total")
             ->where('status', 'paid')
             ->whereNotNull('product_name')
             ->where('product_name', 'not like', 'Hutang:%')
-            ->groupByRaw("TRIM(REGEXP_REPLACE(product_name, ' \\\\(\\\\d+x\\\\)$', ''))")
+            ->groupByRaw("TRIM(REGEXP_REPLACE(product_name, ' \\\\(\\\\d+x\\\\)', ''))")
             ->orderByDesc('total')
             ->limit(10);
 
-        if ($this->filterMonth && $this->filterYear) {
-            $query->whereMonth('payment_date', $this->filterMonth)
-                  ->whereYear('payment_date', $this->filterYear);
-        } elseif ($this->filterYear) {
-            $query->whereYear('payment_date', $this->filterYear);
+        // Parse filter
+        if ($this->filter && $this->filter !== 'all') {
+            if (str_contains($this->filter, '-')) {
+                [$month, $year] = explode('-', $this->filter);
+                $query->whereMonth('payment_date', $month)
+                      ->whereYear('payment_date', $year);
+            }
         }
 
         $data = $query->get();
@@ -72,7 +72,7 @@ class ProdukChart extends ChartWidget
         ];
     }
 
-    protected function getType(): string
+    public function getType(): string
     {
         return 'bar';
     }

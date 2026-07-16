@@ -28,7 +28,7 @@ class CashFlowResource extends Resource
     
     protected static ?string $modelLabel = 'Analisis Laporan';
     
-    protected static ?string $pluralModelLabel = 'Pembukuan';
+    protected static ?string $pluralModelLabel = 'Analisis Laporan';
     
     protected static ?string $navigationGroup = 'Laporan';
     

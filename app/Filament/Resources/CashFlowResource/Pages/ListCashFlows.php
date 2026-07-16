@@ -79,6 +79,11 @@ class ListCashFlows extends ListRecords
         return ' ';
     }
 
+    protected function getTableHeading(): ?string
+    {
+        return 'Cash Flow';
+    }
+
     public function getHeaderFilterHtml(): string
     {
         return '';
@@ -177,6 +182,7 @@ class ListCashFlows extends ListRecords
             \App\Filament\Resources\CashFlowResource\Widgets\KategoriPengeluaranChart::class,
             \App\Filament\Resources\CashFlowResource\Widgets\ProdukChart::class,
             \App\Filament\Resources\CashFlowResource\Widgets\PaketMembershipChart::class,
+            \App\Filament\Resources\CashFlowResource\Widgets\MemberPerBulanChart::class,
         ];
     }
 

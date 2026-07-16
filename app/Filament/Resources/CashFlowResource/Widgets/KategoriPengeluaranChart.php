@@ -2,37 +2,35 @@
 
 namespace App\Filament\Resources\CashFlowResource\Widgets;
 
-use Filament\Widgets\ChartWidget;
+use Filament\Widgets\LineChartWidget;
 use App\Models\Expense;
 use Carbon\Carbon;
 
-class KategoriPengeluaranChart extends ChartWidget
+class KategoriPengeluaranChart extends LineChartWidget
 {
     protected static ?string $heading = 'Perbandingan Kategori Pengeluaran';
-    protected static bool $isLazy = true;
+    protected static bool $isLazy = false;
     protected int | string | array $columnSpan = 1;
     protected static ?string $pollingInterval = null;
 
-    public string $filterMonth = '';
-    public string $filterYear = '';
+    public ?string $filter = null;
 
-    protected $listeners = ['filterUpdated' => 'updateFilter'];
+    protected $listeners = ['filterUpdated' => 'applyFilter'];
 
-    public function mount(): void
+    public function applyFilter(string $month, string $year): void
     {
-        $this->filterMonth = '';
-        $this->filterYear  = '';
-    }
-
-    public function updateFilter(string $month, string $year): void
-    {
-        $this->filterMonth = $month;
-        $this->filterYear  = $year;
+        $this->filter = ($month && $year) ? $month . '-' . $year : 'all';
+        $this->updateChartData();
     }
 
     protected function getMaxHeight(): ?string
     {
         return '300px';
+    }
+
+    protected function getFilters(): ?array
+    {
+        return null;
     }
 
     protected function getData(): array
@@ -41,11 +39,13 @@ class KategoriPengeluaranChart extends ChartWidget
             ->groupBy('category')
             ->orderByDesc('total');
 
-        if ($this->filterMonth && $this->filterYear) {
-            $query->whereMonth('expense_date', $this->filterMonth)
-                  ->whereYear('expense_date', $this->filterYear);
-        } elseif ($this->filterYear) {
-            $query->whereYear('expense_date', $this->filterYear);
+        // Parse filter
+        if ($this->filter && $this->filter !== 'all') {
+            if (str_contains($this->filter, '-')) {
+                [$month, $year] = explode('-', $this->filter);
+                $query->whereMonth('expense_date', $month)
+                      ->whereYear('expense_date', $year);
+            }
         }
 
         $data = $query->get();
@@ -60,8 +60,10 @@ class KategoriPengeluaranChart extends ChartWidget
             'rgba(245, 158, 11, 0.18)',
         ];
 
+        // LineChartWidget expects line data format, we'll override getType
         return [
             'datasets' => [[
+                'label'           => 'Total',
                 'data'            => $data->pluck('total')->map(fn($v) => (float)$v)->toArray(),
                 'backgroundColor' => array_slice($colors, 0, $data->count()),
                 'borderWidth'     => 2,
@@ -71,7 +73,8 @@ class KategoriPengeluaranChart extends ChartWidget
         ];
     }
 
-    protected function getType(): string
+    // Override to use doughnut instead of line
+    public function getType(): string
     {
         return 'doughnut';
     }
