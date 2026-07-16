@@ -22,7 +22,7 @@ class CashFlowResource extends Resource
 {
     protected static ?string $model = CashFlow::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-calculator';
+    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
     
     protected static ?string $navigationLabel = 'Analisis Laporan';
     
