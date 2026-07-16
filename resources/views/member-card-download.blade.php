@@ -51,22 +51,22 @@
             ctx.clip();
 
             const grad = ctx.createLinearGradient(0, 0, W, H);
-            grad.addColorStop(0, '#0d1b2a');
-            grad.addColorStop(0.5, '#0a1628');
-            grad.addColorStop(1, '#0d1b2a');
+            grad.addColorStop(0, '#1e1410');
+            grad.addColorStop(0.5, '#0f0905');
+            grad.addColorStop(1, '#1e1410');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, W, H);
 
-            // 2. Blue glow top-right
+            // 2. Orange glow top-right
             const flare = ctx.createRadialGradient(W, 0, 0, W, 0, 500);
-            flare.addColorStop(0, 'rgba(9,146,194,0.25)');
+            flare.addColorStop(0, 'rgba(245,158,11,0.25)');
             flare.addColorStop(1, 'transparent');
             ctx.fillStyle = flare;
             ctx.fillRect(0, 0, W, H);
 
-            // 3. Blue glow bottom-left
+            // 3. Orange glow bottom-left
             const flare2 = ctx.createRadialGradient(0, H, 0, 0, H, 350);
-            flare2.addColorStop(0, 'rgba(9,146,194,0.10)');
+            flare2.addColorStop(0, 'rgba(245,158,11,0.10)');
             flare2.addColorStop(1, 'transparent');
             ctx.fillStyle = flare2;
             ctx.fillRect(0, 0, W, H);
@@ -93,7 +93,7 @@
             ctx.save();
             ctx.beginPath();
             ctx.roundRect(0, 0, W, H, R);
-            ctx.strokeStyle = 'rgba(9,146,194,0.3)';
+            ctx.strokeStyle = 'rgba(245,158,11,0.3)';
             ctx.lineWidth = 2;
             ctx.stroke();
             ctx.restore();
@@ -110,18 +110,18 @@
             const pw = ctx.measureText(paket).width;
             const pillPad = 13, pillH = 36, pillR = 18;
             const pillW = pw + pillPad * 2;
-            ctx.strokeStyle = "#0992C2"; ctx.lineWidth = 2;
+            ctx.strokeStyle = "#F59E0B"; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.roundRect(lx, y, pillW, pillH, pillR); ctx.stroke();
-            ctx.fillStyle = "rgba(9,146,194,0.12)";
+            ctx.fillStyle = "rgba(245,158,11,0.12)";
             ctx.beginPath(); ctx.roundRect(lx, y, pillW, pillH, pillR); ctx.fill();
-            ctx.fillStyle = "#0992C2";
+            ctx.fillStyle = "#F59E0B";
             ctx.textBaseline = "middle";
             ctx.fillText(paket, lx + pillPad, y + pillH / 2);
             ctx.textBaseline = "top";
             y += pillH + gap + 34;
 
             // Gym name
-            ctx.fillStyle = "#0992C2";
+            ctx.fillStyle = "#F59E0B";
             ctx.font = "italic 900 55px Poppins";
             ctx.fillText("{{ strtoupper(config('app.name', 'GYM')) }}", lx, y);
             y += 55 + gap;
@@ -153,7 +153,7 @@
             y += 16 + gap;
 
             // Expiry date
-            ctx.fillStyle = "{{ $isExpired ? '#ef4444' : '#0992C2' }}";
+            ctx.fillStyle = "{{ $isExpired ? '#ef4444' : '#F59E0B' }}";
             ctx.font = "900 38px Poppins";
             ctx.fillText("{{ strtoupper(\Carbon\Carbon::parse($member->expiry_date)->translatedFormat('d F Y')) }}", lx, y);
 
@@ -178,13 +178,13 @@
 
             function doDownload() {
                 ctx.save();
-                ctx.shadowColor = 'rgba(9,146,194,0.65)';
+                ctx.shadowColor = 'rgba(245,158,11,0.65)';
                 ctx.shadowBlur = 45;
                 ctx.fillStyle = "#ffffff";
                 ctx.beginPath(); ctx.roundRect(qx, qy, qs, qs, qr); ctx.fill();
                 ctx.restore();
 
-                ctx.strokeStyle = 'rgba(9,146,194,0.55)'; ctx.lineWidth = 3;
+                ctx.strokeStyle = 'rgba(245,158,11,0.55)'; ctx.lineWidth = 3;
                 ctx.beginPath(); ctx.roundRect(qx, qy, qs, qs, qr); ctx.stroke();
 
                 const pad = 20;

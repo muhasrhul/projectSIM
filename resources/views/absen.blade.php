@@ -61,7 +61,7 @@
     <div class="w-full max-w-md">
         
         <div class="text-center mb-10">
-            <h1 class="text-5xl font-hero tracking-tighter italic">ARIFAH <span class="text-[#0992C2]">GYM</span></h1>
+            <h1 class="text-5xl font-hero tracking-tighter italic">ARIFAH <span class="text-[#F59E0B]">GYM</span></h1>
             <div class="flex items-center justify-center gap-3 mt-2">
                 <div class="h-[1px] w-10 bg-zinc-800"></div>
                 <p class="text-zinc-500 text-[10px] uppercase tracking-[0.5em] font-black italic">MAKASSAR</p>
@@ -86,7 +86,7 @@
                         <h3 class="text-3xl font-black italic">{{ session('total_latihan') }}<span class="text-sm text-green-500 ml-1">X</span></h3>
                     </div>
                     <div class="bg-white/[0.03] p-5 rounded-3xl border border-white/5 flex flex-col justify-center items-center">
-                        <i class="fa-solid {{ session('badge') == 'ARIFAH WARRIOR' ? 'fa-fire text-[#0992C2]' : 'fa-medal text-blue-400' }} text-2xl mb-1"></i>
+                        <i class="fa-solid {{ session('badge') == 'ARIFAH WARRIOR' ? 'fa-fire text-[#F59E0B]' : 'fa-medal text-blue-400' }} text-2xl mb-1"></i>
                         <p class="text-[10px] font-black uppercase tracking-tighter">{{ session('badge') }}</p>
                     </div>
                 </div>
@@ -94,19 +94,19 @@
                 <!-- Digital Member Card -->
                 <div class="relative w-full rounded-2xl overflow-hidden mb-8 mx-auto transition-all duration-500 hover:scale-[1.02] group"
                      style="max-width: 520px;
-                            background: linear-gradient(135deg, #0d1b2a 0%, #0a1628 50%, #0d1b2a 100%);
-                            border: 1px solid rgba(9,146,194,0.25);
-                            box-shadow: 0 0 0 1px rgba(9,146,194,0.1), 0 20px 60px -10px rgba(0,0,0,0.8), 0 0 40px -5px rgba(9,146,194,0.15);">
+                            background: linear-gradient(135deg, #1e1410 0%, #0f0905 50%, #1e1410 100%);
+                            border: 1px solid rgba(245,158,11,0.25);
+                            box-shadow: 0 0 0 1px rgba(245,158,11,0.1), 0 20px 60px -10px rgba(0,0,0,0.8), 0 0 40px -5px rgba(245,158,11,0.15);">
 
                     <!-- Dumbbell Watermark -->
                     <div class="absolute inset-0 flex items-center pointer-events-none overflow-hidden opacity-[0.04]">
                         <i class="fa-solid fa-dumbbell -rotate-12" style="font-size:130px; margin-left:24px;"></i>
                     </div>
 
-                    <!-- Blue glow top-right -->
+                    <!-- Orange glow top-right -->
                     <div class="absolute top-0 right-0 pointer-events-none"
                          style="width:200px; height:200px; opacity:0.2;
-                                background: radial-gradient(circle at top right, #0992C2 0%, transparent 70%);
+                                background: radial-gradient(circle at top right, #F59E0B 0%, transparent 70%);
                                 filter: blur(20px);"></div>
 
                     <div class="relative z-10 flex" style="padding: 18px 16px 18px 20px; gap: 12px; text-align: left;">
@@ -118,8 +118,8 @@
                             <div>
                                 <span class="inline-flex items-center uppercase font-black rounded-full"
                                       style="font-size:8px; letter-spacing:0.12em; padding: 4px 10px; line-height:1;
-                                             border: 1.5px solid #0992C2; color: #0992C2;
-                                             background: rgba(9,146,194,0.1);">
+                                             border: 1.5px solid #F59E0B; color: #F59E0B;
+                                             background: rgba(245,158,11,0.1);">
                                     {{ session('paket_nama') }}
                                 </span>
                             </div>
@@ -127,8 +127,8 @@
                             <!-- Gym name -->
                             <div style="margin-top:10px;">
                                 <p class="font-black italic truncate"
-                                   style="font-family:'Poppins'; font-size:22px; color:#0992C2; line-height:1.1;
-                                          text-shadow: 0 0 18px rgba(9,146,194,0.6);">
+                                   style="font-family:'Poppins'; font-size:22px; color:#F59E0B; line-height:1.1;
+                                          text-shadow: 0 0 18px rgba(245,158,11,0.6);">
                                     ARIFAH GYM
                                 </p>
                                 <p style="font-size:7px; letter-spacing:0.18em; color:rgba(255,255,255,0.45);
@@ -156,7 +156,7 @@
                                     BERLAKU HINGGA
                                 </p>
                                 <p class="font-black uppercase truncate"
-                                   style="font-family:'Poppins'; font-size:16px; color:#0992C2;
+                                   style="font-family:'Poppins'; font-size:16px; color:#F59E0B;
                                           letter-spacing:0.04em; margin-top:3px;">
                                     {{ session('expiry_date') }}
                                 </p>
@@ -168,7 +168,7 @@
                         <div class="flex-shrink-0 flex items-center justify-center">
                             <div class="rounded-xl transition-all duration-500 group-hover:scale-105"
                                  style="padding:7px; background:#fff;
-                                        box-shadow: 0 0 0 2px rgba(9,146,194,0.5), 0 0 28px rgba(9,146,194,0.45);">
+                                        box-shadow: 0 0 0 2px rgba(245,158,11,0.5), 0 0 28px rgba(245,158,11,0.45);">
                                 <img id="qrSrc"
                                      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ session('member_id') }}"
                                      style="width:115px; height:115px; display:block;"
@@ -189,24 +189,24 @@
                 <canvas id="finalCanvas" width="1050" height="630"></canvas>
 
                 <div class="grid grid-cols-2 gap-4 w-full">
-                    <button id="btnDownload" onclick="drawAndDownload()" class="group/btn bg-gradient-to-r from-gray-800 to-gray-900 hover:from-[#0992C2] hover:to-[#0992C2] py-5 rounded-[2rem] text-[11px] font-black uppercase tracking-widest transition-all duration-300 border border-white/10 hover:border-[#0992C2] shadow-lg hover:shadow-[0_10px_30px_-10px_rgba(9,146,194,0.5)] transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden">
+                    <button id="btnDownload" onclick="drawAndDownload()" class="group/btn bg-gradient-to-r from-gray-800 to-gray-900 hover:from-[#F59E0B] hover:to-[#F59E0B] py-5 rounded-[2rem] text-[11px] font-black uppercase tracking-widest transition-all duration-300 border border-white/10 hover:border-[#F59E0B] shadow-lg hover:shadow-[0_10px_30px_-10px_rgba(245,158,11,0.5)] transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden">
                         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-700"></div>
                         <span class="relative flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-download text-[#0992C2] group-hover/btn:text-black transition-colors duration-300"></i> 
+                            <i class="fa-solid fa-download text-[#F59E0B] group-hover/btn:text-black transition-colors duration-300"></i> 
                             <span class="group-hover/btn:text-black transition-colors duration-300">SIMPAN</span>
                         </span>
                     </button>
-                    <a href="/absen" class="bg-gradient-to-r from-[#0992C2] to-[#0992C2] hover:from-[#0992C2] hover:to-[#0992C2] py-5 rounded-[2rem] text-[11px] font-black text-black uppercase italic tracking-widest text-center flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-[0_10px_30px_-10px_rgba(9,146,194,0.5)] transform hover:scale-[1.02] active:scale-[0.98]">SELESAI</a>
+                    <a href="/absen" class="bg-gradient-to-r from-[#F59E0B] to-[#F59E0B] hover:from-[#F59E0B] hover:to-[#F59E0B] py-5 rounded-[2rem] text-[11px] font-black text-black uppercase italic tracking-widest text-center flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-[0_10px_30px_-10px_rgba(245,158,11,0.5)] transform hover:scale-[1.02] active:scale-[0.98]">SELESAI</a>
                 </div>
             </div>
         @else
             <div class="premium-card p-12 rounded-[4rem] relative overflow-hidden">
-                <div class="absolute -top-24 -right-24 w-56 h-56 bg-[#0992C2]/10 rounded-full blur-[80px]"></div>
+                <div class="absolute -top-24 -right-24 w-56 h-56 bg-[#F59E0B]/10 rounded-full blur-[80px]"></div>
                 
                 <div class="relative z-10 text-left">
                     <div class="mb-12">
                         <h2 class="text-2xl font-hero italic text-white tracking-widest">ABSEN</h2>
-                        <div class="h-1 w-12 bg-[#0992C2] mt-2"></div>
+                        <div class="h-1 w-12 bg-[#F59E0B] mt-2"></div>
                         <p class="text-[11px] text-zinc-500 uppercase font-bold tracking-[0.2em] mt-4 italic">Welcome back, athlete.</p>
                     </div>
 
@@ -222,14 +222,14 @@
                     <form action="/absen" method="POST" class="space-y-10" id="absenForm">
                         @csrf
                         <div class="relative group">
-                            <div class="absolute left-8 top-1/2 -translate-y-1/2 text-zinc-700 group-focus-within:text-[#0992C2] transition-all text-xl">
+                            <div class="absolute left-8 top-1/2 -translate-y-1/2 text-zinc-700 group-focus-within:text-[#F59E0B] transition-all text-xl">
                                 <i class="fa-solid fa-fingerprint"></i>
                             </div>
                             <input type="tel" name="phone" id="phone" required placeholder="NOMOR WHATSAPP" autocomplete="tel" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                                   class="input-premium w-full pl-20 pr-10 py-7 rounded-[2.5rem] outline-none text-2xl font-black text-[#0992C2] placeholder:text-zinc-800 placeholder:text-sm placeholder:tracking-[0.4em]">
+                                   class="input-premium w-full pl-20 pr-10 py-7 rounded-[2.5rem] outline-none text-2xl font-black text-[#F59E0B] placeholder:text-zinc-800 placeholder:text-sm placeholder:tracking-[0.4em]">
                         </div>
 
-                        <button type="submit" id="submitBtn" class="w-full bg-[#0992C2] hover:bg-[#0992C2] text-black font-black py-7 rounded-[2.5rem] text-sm uppercase italic tracking-[0.3em] shadow-[0_20px_40px_-10px_rgba(9,146,194,0.4)] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="submit" id="submitBtn" class="w-full bg-[#F59E0B] hover:bg-[#F59E0B] text-black font-black py-7 rounded-[2.5rem] text-sm uppercase italic tracking-[0.3em] shadow-[0_20px_40px_-10px_rgba(245,158,11,0.4)] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                             <span id="btnText">TAP-IN NOW <i class="fa-solid fa-arrow-right-long ml-3"></i></span>
                             <span id="btnLoading" class="hidden">
                                 <i class="fa-solid fa-spinner fa-spin"></i> PROCESSING...
@@ -293,29 +293,29 @@
             const W = 1050, H = 550;
             const R = 48;
 
-            // 1. Background: dark navy gradient
+            // 1. Background: dark brown-black gradient
             ctx.save();
             ctx.beginPath();
             ctx.roundRect(0, 0, W, H, R);
             ctx.clip();
 
             const grad = ctx.createLinearGradient(0, 0, W, H);
-            grad.addColorStop(0, '#0d1b2a');
-            grad.addColorStop(0.5, '#0a1628');
-            grad.addColorStop(1, '#0d1b2a');
+            grad.addColorStop(0, '#1e1410');
+            grad.addColorStop(0.5, '#0f0905');
+            grad.addColorStop(1, '#1e1410');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, W, H);
 
-            // 2. Blue glow top-right
+            // 2. Orange glow top-right
             const flare = ctx.createRadialGradient(W, 0, 0, W, 0, 500);
-            flare.addColorStop(0, 'rgba(9,146,194,0.25)');
+            flare.addColorStop(0, 'rgba(245,158,11,0.25)');
             flare.addColorStop(1, 'transparent');
             ctx.fillStyle = flare;
             ctx.fillRect(0, 0, W, H);
 
-            // 3. Blue glow bottom-left subtle
+            // 3. Orange glow bottom-left subtle
             const flare2 = ctx.createRadialGradient(0, H, 0, 0, H, 350);
-            flare2.addColorStop(0, 'rgba(9,146,194,0.10)');
+            flare2.addColorStop(0, 'rgba(245,158,11,0.10)');
             flare2.addColorStop(1, 'transparent');
             ctx.fillStyle = flare2;
             ctx.fillRect(0, 0, W, H);
@@ -346,7 +346,7 @@
             ctx.save();
             ctx.beginPath();
             ctx.roundRect(0, 0, W, H, R);
-            ctx.strokeStyle = 'rgba(9,146,194,0.3)';
+            ctx.strokeStyle = 'rgba(245,158,11,0.3)';
             ctx.lineWidth = 2;
             ctx.stroke();
             ctx.restore();
@@ -368,18 +368,18 @@
             const pw = ctx.measureText(paket).width;
             const pillPad = 13, pillH = 36, pillR = 18;
             const pillW = pw + pillPad * 2;
-            ctx.strokeStyle = "#0992C2"; ctx.lineWidth = 2;
+            ctx.strokeStyle = "#F59E0B"; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.roundRect(lx, y, pillW, pillH, pillR); ctx.stroke();
-            ctx.fillStyle = "rgba(9,146,194,0.12)";
+            ctx.fillStyle = "rgba(245,158,11,0.12)";
             ctx.beginPath(); ctx.roundRect(lx, y, pillW, pillH, pillR); ctx.fill();
-            ctx.fillStyle = "#0992C2";
+            ctx.fillStyle = "#F59E0B";
             ctx.textBaseline = "middle";
             ctx.fillText(paket, lx + pillPad, y + pillH / 2);
             ctx.textBaseline = "top";
             y += pillH + gap + 34; // extra space after badge before gym name
 
             // 2. Gym name (h=46)
-            ctx.fillStyle = "#0992C2";
+            ctx.fillStyle = "#F59E0B";
             ctx.font = "italic 900 55px Poppins";
             ctx.fillText("ARIFAH GYM", lx, y);
             y += 55 + gap;
@@ -411,7 +411,7 @@
             y += 16 + gap;
 
             // 7. Expiry date (h=38) — should land at ≈ 495 = qy+qs ✓
-            ctx.fillStyle = "#0992C2";
+            ctx.fillStyle = "#F59E0B";
             ctx.font = "900 38px Poppins";
             ctx.fillText("{{ session('expiry_date') }}".toUpperCase(), lx, y);
 
@@ -422,13 +422,13 @@
             img.onload = function() {
                 // White box glow — x=620..1030, y=50..460
                 ctx.save();
-                ctx.shadowColor = 'rgba(9,146,194,0.65)';
+                ctx.shadowColor = 'rgba(245,158,11,0.65)';
                 ctx.shadowBlur = 45;
                 ctx.fillStyle = "#ffffff";
                 ctx.beginPath(); ctx.roundRect(qx, qy, qs, qs, qr); ctx.fill();
                 ctx.restore();
 
-                ctx.strokeStyle = 'rgba(9,146,194,0.55)'; ctx.lineWidth = 3;
+                ctx.strokeStyle = 'rgba(245,158,11,0.55)'; ctx.lineWidth = 3;
                 ctx.beginPath(); ctx.roundRect(qx, qy, qs, qs, qr); ctx.stroke();
 
                 const pad = 20;
@@ -438,7 +438,7 @@
                 link.download = 'ArifahGym-{{ session("member_name") }}.png';
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
-                btn.innerHTML = '<span class="relative flex items-center justify-center gap-2"><i class="fa-solid fa-download text-[#0992C2] group-hover/btn:text-black transition-colors duration-300"></i><span class="group-hover/btn:text-black transition-colors duration-300">SIMPAN</span></span>';
+                btn.innerHTML = '<span class="relative flex items-center justify-center gap-2"><i class="fa-solid fa-download text-[#F59E0B] group-hover/btn:text-black transition-colors duration-300"></i><span class="group-hover/btn:text-black transition-colors duration-300">SIMPAN</span></span>';
                 btn.disabled = false;
             };
         }
