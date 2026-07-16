@@ -80,8 +80,8 @@ class JamTeramaiChart extends LineChartWidget
                     [
                         'label' => 'Total Member Latihan (' . $label . ')',
                         'data' => $values,
-                        'borderColor' => '#3b82f6',
-                        'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
+                        'borderColor' => '#F59E0B',
+                        'backgroundColor' => 'rgba(245, 158, 11, 0.1)',
                         'fill' => true,
                         'tension' => 0.4,
                     ],

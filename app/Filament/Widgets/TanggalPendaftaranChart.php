@@ -75,8 +75,8 @@ class TanggalPendaftaranChart extends ChartWidget
                         'type' => 'bar',
                         'label' => 'Jumlah Member Mendaftar (' . $label . ')',
                         'data' => $values,
-                        'backgroundColor' => '#10b981', // Warna hijau
-                        'borderColor' => '#059669',
+                        'backgroundColor' => '#f59e0b', // Warna orange
+                        'borderColor' => '#d97706',
                         'borderWidth' => 1,
                         'order' => 2,
                     ],
@@ -84,8 +84,8 @@ class TanggalPendaftaranChart extends ChartWidget
                         'type' => 'line',
                         'label' => 'Tren Pendaftaran',
                         'data' => $values,
-                        'borderColor' => '#3b82f6', // Warna biru
-                        'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
+                        'borderColor' => '#ef4444', // Warna merah
+                        'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
                         'borderWidth' => 2,
                         'fill' => false,
                         'tension' => 0.4, // Membuat garis melengkung
