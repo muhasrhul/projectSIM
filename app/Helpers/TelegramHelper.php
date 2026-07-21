@@ -332,7 +332,7 @@ class TelegramHelper
         $message .= "└─ Saldo Bersih: Rp " . number_format($netBalance, 0, ',', '.') . "\n\n";
         
         // LINK EXPORT PDF dengan tanggal spesifik (protected dengan auth)
-        $exportUrl = "https://arifahgym.my.id/export/pembukuan?period=single&date={$tanggalUrl}";
+        $exportUrl = "https://arifahgym.cloud/export/pembukuan?period=single&date={$tanggalUrl}";
         $message .= "📄 *EXPORT LAPORAN PDF*\n";
         $message .= "Klik link berikut untuk download:\n";
         $message .= "{$exportUrl}\n\n";
