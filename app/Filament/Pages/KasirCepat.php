@@ -41,7 +41,7 @@ class KasirCepat extends Page
      * Menggunakan tabel quick_transactions yang terpisah
      * TIDAK ADA absensi untuk kasir cepat (tamu harian tidak perlu tracking detail)
      */
-    public function bayarHarian($productId, $paymentMethod = 'cash', $quantity = 1)
+    public function bayarHarian($productId, $paymentMethod = 'cash', $quantity = 1, $memberName = null)
     {
         // 1. Ambil data produk dari database berdasarkan ID yang diklik
         $product = Product::find($productId);
@@ -95,10 +95,14 @@ class KasirCepat extends Page
         };
 
         // 6. SIMPAN KE TABEL QUICK_TRANSACTIONS
+        $guestName = $memberName 
+            ? $memberName 
+            : (str_contains(strtolower($itemName), 'latihan') || str_contains(strtolower($itemName), 'harian') 
+                ? 'Tamu Latihan' 
+                : 'Tamu Kantin');
+        
         $quickTransaction = QuickTransaction::create([
-            'guest_name'     => str_contains(strtolower($itemName), 'latihan') || str_contains(strtolower($itemName), 'harian') 
-                                ? 'Tamu Latihan' 
-                                : 'Tamu Kantin',
+            'guest_name'     => $guestName,
             'product_name'   => $quantity > 1 ? "{$itemName} ({$quantity}x)" : $itemName,
             'order_id'       => 'KASIR-' . date('YmdHis'),
             'amount'         => $totalAmount,
@@ -120,10 +124,11 @@ class KasirCepat extends Page
         // 7. KIRIM NOTIFIKASI KE DATABASE ADMIN
         $admins = User::all();
         $quantityText = $quantity > 1 ? " ({$quantity}x)" : "";
+        $customerInfo = $memberName ? " oleh **{$memberName}**" : "";
         foreach ($admins as $admin) {
             Notification::make()
                 ->title("Pembayaran {$itemName}")
-                ->body("Kasir baru saja mencatat penjualan **{$itemName}{$quantityText}** seharga **{$nominal}** via **{$paymentMethodLabel}**. Stock tersisa: **{$product->stock}**")
+                ->body("Kasir baru saja mencatat penjualan **{$itemName}{$quantityText}**{$customerInfo} seharga **{$nominal}** via **{$paymentMethodLabel}**. Stock tersisa: **{$product->stock}**")
                 ->icon('heroicon-o-check-circle')
                 ->iconColor('success')
                 ->sendToDatabase($admin);
@@ -136,9 +141,10 @@ class KasirCepat extends Page
         \App\Helpers\WhatsAppHelper::sendQuickTransactionNotification($quickTransaction);
 
         // 10. Notifikasi melayang (Toast) di layar kasir
+        $customerInfo = $memberName ? " oleh **{$memberName}**" : "";
         Notification::make()
             ->title('Transaksi Berhasil!')
-            ->body("Pembayaran **{$itemName}{$quantityText}** sebesar **{$nominal}** via **{$paymentMethodLabel}** telah dicatat. Stock tersisa: **{$product->stock}**")
+            ->body("Pembayaran **{$itemName}{$quantityText}**{$customerInfo} sebesar **{$nominal}** via **{$paymentMethodLabel}** telah dicatat. Stock tersisa: **{$product->stock}**")
             ->success()
             ->send();
     }

@@ -1462,6 +1462,41 @@
             </div>
             
             <div class="modal-body">
+                <!-- Member Name Dropdown (Optional) -->
+                <div class="member-section" style="margin-bottom: 20px; position: relative;">
+                    <div style="text-align: left;">
+                        <div style="font-size: 0.8rem; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600;">
+                            Nama Pelanggan
+                        </div>
+                        <input type="text" id="memberNameInput" placeholder="Cari atau pilih member..." 
+                               autocomplete="off" 
+                               oninput="searchMembersForPayment(this.value)" 
+                               onfocus="showMemberSuggestionsForPayment()"
+                               style="width: 100%; height: 45px; padding: 0 15px; font-size: 1rem; border: 2px solid #e5e7eb; border-radius: 8px; background: #f8fafc; transition: all 0.2s;" 
+                               onfocusin="this.style.borderColor='#f59e0b'; this.style.background='white';" 
+                               onblur="setTimeout(() => hideMemberSuggestionsForPayment(), 200)">
+                        
+                        <!-- Dropdown suggestions for payment modal -->
+                        <div id="memberSuggestionsPayment" style="
+                            position: absolute;
+                            top: 100%;
+                            left: 0;
+                            right: 0;
+                            background: white;
+                            border: 2px solid #e5e7eb;
+                            border-radius: 8px;
+                            margin-top: 4px;
+                            max-height: 200px;
+                            overflow-y: auto;
+                            z-index: 1000;
+                            display: none;
+                            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                        ">
+                            <!-- Suggestions will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="quantity-section" style="margin-bottom: 20px;">
                     <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
                         <button type="button" onclick="changeQuantity(-1)" class="qty-btn" style="width: 40px; height: 40px; border: 2px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; font-size: 1.2rem; font-weight: bold;">-</button>
@@ -1550,6 +1585,8 @@
             selectedProduct = null;
             // Reset payment method to default
             selectedPaymentMethod = 'cash';
+            // Reset member name input
+            document.getElementById('memberNameInput').value = '';
         }
 
         function changeQuantity(change) {
@@ -1579,6 +1616,7 @@
             }
             
             const quantity = parseInt(document.getElementById('quantityInput').value) || 1;
+            const memberName = document.getElementById('memberNameInput').value.trim() || null;
             
             // Debug: log semua data yang akan dikirim
             console.log('=== CONFIRM PAYMENT DEBUG ===');
@@ -1586,6 +1624,7 @@
             console.log('Product Name:', selectedProduct.name);
             console.log('Payment Method:', selectedPaymentMethod);
             console.log('Quantity:', quantity);
+            console.log('Member Name:', memberName);
             console.log('Selected button:', document.querySelector('#paymentModal .payment-btn.selected')?.dataset.method);
             console.log('==============================');
             
@@ -1593,8 +1632,8 @@
             const finalPaymentMethod = selectedPaymentMethod || 'cash';
             console.log('Final payment method to send:', finalPaymentMethod);
             
-            // Call Livewire method with payment method and quantity
-            @this.call('bayarHarian', selectedProduct.id, finalPaymentMethod, quantity);
+            // Call Livewire method with payment method, quantity, and member name
+            @this.call('bayarHarian', selectedProduct.id, finalPaymentMethod, quantity, memberName);
             closePaymentModal();
         }
 
@@ -1943,6 +1982,85 @@
             // Call Livewire method
             @this.call('bayarHutang', selectedDebt.id, paymentMethod);
             closePayDebtModal();
+        }
+
+        // === MEMBER SUGGESTIONS FOR PAYMENT MODAL ===
+        function searchMembersForPayment(query) {
+            const suggestionsDiv = document.getElementById('memberSuggestionsPayment');
+            
+            if (!query || query.length < 2) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+
+            // Filter members berdasarkan nama
+            const filteredMembers = membersData.filter(member => 
+                member.name.toLowerCase().includes(query.toLowerCase())
+            );
+
+            if (filteredMembers.length === 0) {
+                suggestionsDiv.innerHTML = `
+                    <div style="padding: 12px 16px; color: #9ca3af; font-size: 0.9rem; text-align: center;">
+                        Tidak ada member ditemukan
+                    </div>
+                `;
+                suggestionsDiv.style.display = 'block';
+                return;
+            }
+
+            // Buat HTML untuk suggestions
+            let suggestionsHTML = '';
+            filteredMembers.slice(0, 5).forEach(member => { // Maksimal 5 suggestions
+                suggestionsHTML += `
+                    <div onclick="selectMemberForPayment('${member.name.replace(/'/g, "\\'")}', '${member.phone || ''}')" 
+                         style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f3f4f6;"
+                         onmouseover="this.style.background='#f9fafb'"
+                         onmouseout="this.style.background='white'">
+                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 2px;">${member.name}</div>
+                        ${member.phone ? `<div style="font-size: 0.8rem; color: #6b7280;">${member.phone}</div>` : ''}
+                    </div>
+                `;
+            });
+
+            suggestionsDiv.innerHTML = suggestionsHTML;
+            suggestionsDiv.style.display = 'block';
+        }
+
+        function showMemberSuggestionsForPayment() {
+            const query = document.getElementById('memberNameInput').value;
+            if (query.length >= 2) {
+                searchMembersForPayment(query);
+            } else if (query.length === 0 && membersData.length > 0) {
+                // Show all members if input is empty
+                const suggestionsDiv = document.getElementById('memberSuggestionsPayment');
+                let suggestionsHTML = '';
+                membersData.slice(0, 5).forEach(member => {
+                    suggestionsHTML += `
+                        <div onclick="selectMemberForPayment('${member.name.replace(/'/g, "\\'")}', '${member.phone || ''}')" 
+                             style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f3f4f6;"
+                             onmouseover="this.style.background='#f9fafb'"
+                             onmouseout="this.style.background='white'">
+                            <div style="font-weight: 600; color: #1f2937; margin-bottom: 2px;">${member.name}</div>
+                            ${member.phone ? `<div style="font-size: 0.8rem; color: #6b7280;">${member.phone}</div>` : ''}
+                        </div>
+                    `;
+                });
+                suggestionsDiv.innerHTML = suggestionsHTML;
+                suggestionsDiv.style.display = 'block';
+            }
+        }
+
+        function hideMemberSuggestionsForPayment() {
+            const suggestionsDiv = document.getElementById('memberSuggestionsPayment');
+            suggestionsDiv.style.display = 'none';
+        }
+
+        function selectMemberForPayment(name, phone) {
+            // Set nama member
+            document.getElementById('memberNameInput').value = name;
+            
+            // Sembunyikan suggestions
+            hideMemberSuggestionsForPayment();
         }
 
         // Payment method selection for debt modal
