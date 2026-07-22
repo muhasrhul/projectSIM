@@ -919,6 +919,13 @@ class MemberResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ])
             ->headerActions([
+                Tables\Actions\Action::make('export_csv')
+                    ->label('Export CSV')
+                    ->color('success')
+                    ->icon('heroicon-o-document-download')
+                    ->url(fn () => route('export-members', ['format' => 'csv']))
+                    ->openUrlInNewTab(),
+
                 Tables\Actions\Action::make('export_excel')
                     ->label('Export Excel')
                     ->hidden()

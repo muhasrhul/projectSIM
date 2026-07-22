@@ -644,10 +644,73 @@ Route::get('/cetak-laporan-pengeluaran', function (Request $request) {
 Route::get('/export-members', function (Request $request) {
     $data = Member::orderBy('created_at', 'desc')->get();
 
-    if ($request->query('format') == 'pdf') {
+    $format = $request->query('format', 'excel');
+
+    if ($format == 'pdf') {
         return view('members_pdf', compact('data'));
     }
 
+    if ($format == 'csv') {
+        $filename = "Daftar_Member_ARIFAH_GYM_" . date('d-m-Y') . ".csv";
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
+
+        $callback = function() use ($data) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for Excel UTF-8 support
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Header
+            fputcsv($file, ['No', 'ID', 'Nama', 'NIK', 'Fingerprint', 'Email', 'WhatsApp', 'Tipe Member', 'Tanggal Bergabung', 'Tanggal Berakhir', 'Status']);
+            
+            $no = 1;
+            foreach ($data as $row) {
+                $joinDate = $row->join_date ? \Carbon\Carbon::parse($row->join_date)->format('d/m/Y') : '-';
+                $expiryDate = $row->expiry_date ? \Carbon\Carbon::parse($row->expiry_date)->format('d/m/Y') : '-';
+                
+                // Tentukan status
+                $today = \Carbon\Carbon::now('Asia/Makassar')->startOfDay();
+                if (!$row->is_active && !$row->expiry_date) {
+                    $status = 'Pendaftar Baru';
+                } elseif (!$row->is_active && $row->expiry_date) {
+                    $expiry = \Carbon\Carbon::parse($row->expiry_date)->startOfDay();
+                    $status = $today->gt($expiry) ? 'Masa Aktif Habis' : 'Non-Aktif';
+                } elseif ($row->is_active) {
+                    $status = 'Aktif';
+                } else {
+                    $status = 'Non-Aktif';
+                }
+                
+                fputcsv($file, [
+                    $no,
+                    $row->id,
+                    $row->name,
+                    $row->nik ?? '-',
+                    $row->fingerprint_id ?? '-',
+                    $row->email,
+                    $row->phone,
+                    $row->type,
+                    $joinDate,
+                    $expiryDate,
+                    $status
+                ]);
+                $no++;
+            }
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // Excel format (default)
     $filename = "Daftar_Member_ARIFAH_GYM_" . date('d-m-Y') . ".xls";
     header("Content-Type: application/vnd.ms-excel");
     header("Content-Disposition: attachment; filename=\"$filename\"");
