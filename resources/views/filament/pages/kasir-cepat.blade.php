@@ -670,6 +670,43 @@
             background: rgba(245, 158, 11, 0.2) !important;
         }
 
+        /* Member suggestions scrollbar - Hidden but scrollable */
+        #memberSuggestionsPayment {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+
+        #memberSuggestionsPayment::-webkit-scrollbar {
+            display: none; /* Chrome/Safari/Opera */
+        }
+
+        /* Scroll indicators dengan gradient */
+        #memberSuggestionsPayment::before {
+            content: '';
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--modal-input-bg) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+            display: block;
+        }
+
+        #memberSuggestionsPayment::after {
+            content: '';
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to top, var(--modal-input-bg) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+            display: block;
+        }
+
         .modal-header {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
@@ -716,6 +753,12 @@
             overflow-y: auto;
             flex: 1;
             min-height: 0;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        
+        .modal-body::-webkit-scrollbar {
+            display: none; /* Chrome/Safari/Opera */
         }
         .quantity-section {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -1469,12 +1512,14 @@
                             Nama Pelanggan
                         </div>
                         <input type="text" id="memberNameInput" placeholder="Cari atau pilih member..." 
+                               value="Tamu Kantin"
                                autocomplete="off" 
                                oninput="searchMembersForPayment(this.value)" 
-                               onfocus="showMemberSuggestionsForPayment()"
-                               style="width: 100%; height: 45px; padding: 0 15px; font-size: 1rem; border: 2px solid #e5e7eb; border-radius: 8px; background: #f8fafc; transition: all 0.2s;" 
-                               onfocusin="this.style.borderColor='#f59e0b'; this.style.background='white';" 
-                               onblur="setTimeout(() => hideMemberSuggestionsForPayment(), 200)">
+                               onfocus="if(this.value === 'Tamu Kantin') this.value = ''; showMemberSuggestionsForPayment()"
+                               class="modal-form-input"
+                               style="width: 100%; height: 45px; padding: 0 15px; font-size: 1rem; border: 2px solid; border-radius: 8px; transition: all 0.2s;" 
+                               onfocusin="this.style.borderColor='#f59e0b';" 
+                               onblur="setTimeout(() => { hideMemberSuggestionsForPayment(); if(!this.value.trim()) this.value='Tamu Kantin'; }, 200); this.style.borderColor=''">
                         
                         <!-- Dropdown suggestions for payment modal -->
                         <div id="memberSuggestionsPayment" style="
@@ -1482,15 +1527,17 @@
                             top: 100%;
                             left: 0;
                             right: 0;
-                            background: white;
-                            border: 2px solid #e5e7eb;
+                            background: var(--modal-input-bg);
+                            border: 2px solid var(--modal-input-border);
                             border-radius: 8px;
                             margin-top: 4px;
-                            max-height: 200px;
+                            max-height: 250px;
                             overflow-y: auto;
+                            overflow-x: hidden;
                             z-index: 1000;
                             display: none;
                             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                            color: var(--modal-input-text);
                         ">
                             <!-- Suggestions will be populated here -->
                         </div>
@@ -1585,8 +1632,8 @@
             selectedProduct = null;
             // Reset payment method to default
             selectedPaymentMethod = 'cash';
-            // Reset member name input
-            document.getElementById('memberNameInput').value = '';
+            // Reset member name input to default
+            document.getElementById('memberNameInput').value = 'Tamu Kantin';
         }
 
         function changeQuantity(change) {
@@ -1616,7 +1663,9 @@
             }
             
             const quantity = parseInt(document.getElementById('quantityInput').value) || 1;
-            const memberName = document.getElementById('memberNameInput').value.trim() || null;
+            const memberNameRaw = document.getElementById('memberNameInput').value.trim();
+            // Jika "Tamu Kantin" (default), kirim null agar backend set otomatis
+            const memberName = (memberNameRaw === 'Tamu Kantin' || !memberNameRaw) ? null : memberNameRaw;
             
             // Debug: log semua data yang akan dikirim
             console.log('=== CONFIRM PAYMENT DEBUG ===');
@@ -2013,11 +2062,12 @@
             filteredMembers.slice(0, 5).forEach(member => { // Maksimal 5 suggestions
                 suggestionsHTML += `
                     <div onclick="selectMemberForPayment('${member.name.replace(/'/g, "\\'")}', '${member.phone || ''}')" 
-                         style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f3f4f6;"
-                         onmouseover="this.style.background='#f9fafb'"
-                         onmouseout="this.style.background='white'">
-                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 2px;">${member.name}</div>
-                        ${member.phone ? `<div style="font-size: 0.8rem; color: #6b7280;">${member.phone}</div>` : ''}
+                         class="member-suggestion-payment"
+                         style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid rgba(0,0,0,0.05);"
+                         onmouseover="this.style.background='rgba(245, 158, 11, 0.1)'"
+                         onmouseout="this.style.background='transparent'">
+                        <div style="font-weight: 600; margin-bottom: 2px;">${member.name}</div>
+                        ${member.phone ? `<div style="font-size: 0.8rem; opacity: 0.7;">${member.phone}</div>` : ''}
                     </div>
                 `;
             });
@@ -2037,11 +2087,12 @@
                 membersData.slice(0, 5).forEach(member => {
                     suggestionsHTML += `
                         <div onclick="selectMemberForPayment('${member.name.replace(/'/g, "\\'")}', '${member.phone || ''}')" 
-                             style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f3f4f6;"
-                             onmouseover="this.style.background='#f9fafb'"
-                             onmouseout="this.style.background='white'">
-                            <div style="font-weight: 600; color: #1f2937; margin-bottom: 2px;">${member.name}</div>
-                            ${member.phone ? `<div style="font-size: 0.8rem; color: #6b7280;">${member.phone}</div>` : ''}
+                             class="member-suggestion-payment"
+                             style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid rgba(0,0,0,0.05);"
+                             onmouseover="this.style.background='rgba(245, 158, 11, 0.1)'"
+                             onmouseout="this.style.background='transparent'">
+                            <div style="font-weight: 600; margin-bottom: 2px;">${member.name}</div>
+                            ${member.phone ? `<div style="font-size: 0.8rem; opacity: 0.7;">${member.phone}</div>` : ''}
                         </div>
                     `;
                 });
