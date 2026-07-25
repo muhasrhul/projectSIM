@@ -19,6 +19,21 @@ class Member extends Model
     ];
 
     /**
+     * Generate card token jika belum ada (accessor untuk backward compatibility)
+     */
+    public function getCardTokenAttribute($value)
+    {
+        // Jika token kosong, generate dan save
+        if (empty($value)) {
+            $token = \Illuminate\Support\Str::random(32);
+            $this->attributes['card_token'] = $token;
+            $this->saveQuietly(); // Save tanpa trigger events
+            return $token;
+        }
+        
+        return $value;
+    }
+    /**
      * Logika Perpanjangan Dinamis (Renewal via Tombol Khusus)
      */
     public function perpanjangSatuBulan()

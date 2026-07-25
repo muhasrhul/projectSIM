@@ -709,10 +709,10 @@ class MemberResource extends Resource
 
                 Tables\Columns\TextColumn::make('kartu_member')
                     ->label('Kartu Digital')
-                    ->getStateUsing(fn () => '🔗 Link Kartu')
-                    ->url(fn ($record) => route('member.card', $record->card_token))
+                    ->getStateUsing(fn ($record) => $record->card_token ? '🔗 Link Kartu' : '⚠️ Token Kosong')
+                    ->url(fn ($record) => $record->card_token ? route('member.card', $record->card_token) : null)
                     ->openUrlInNewTab()
-                    ->color('warning')
+                    ->color(fn ($record) => $record->card_token ? 'warning' : 'danger')
                     ->toggleable(isToggledHiddenByDefault: false),
 
                 // --- KOLOM STATUS YANG SUDAH DIPERBARUI LOGIKANYA ---
