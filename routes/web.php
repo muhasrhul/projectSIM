@@ -360,10 +360,61 @@ Route::middleware(['auth:web'])->group(function () {
         return $item;
     });
 
-    if ($request->query('format') == 'pdf') {
+    $format = $request->query('format', 'excel');
+
+    if ($format == 'pdf') {
         return view('laporan_pdf', compact('data', 'dateFilterText', 'additionalFilterText'));
     }
 
+    if ($format == 'csv') {
+        $filename = "Laporan_Keuangan_Member_ARIFAH_GYM_" . date('d-m-Y') . ".csv";
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
+
+        $callback = function() use ($data) {
+            $file = fopen('php://output', 'w');
+
+            // Add BOM for Excel UTF-8 support
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Header
+            fputcsv($file, ['No', 'ID', 'Order ID', 'Tanggal Bayar', 'Nama Customer', 'Member ID', 'Kategori', 'Status', 'Metode', 'Nominal']);
+
+            $no = 1;
+            foreach ($data as $row) {
+                $tanggal = \Carbon\Carbon::parse($row->payment_date)->format('d/m/Y H:i');
+                $namaTampil = $row->member ? $row->member->name : ($row->guest_name ?? 'Umum/Tamu');
+                $memberId = $row->member_id ?? '-';
+                $statusText = ucfirst($row->status ?? 'paid');
+
+                fputcsv($file, [
+                    $no,
+                    $row->id,
+                    $row->order_id,
+                    $tanggal,
+                    $namaTampil,
+                    $memberId,
+                    $row->type,
+                    $statusText,
+                    $row->payment_method,
+                    $row->amount
+                ]);
+                $no++;
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // Excel format (default)
     $filename = "Laporan_Keuangan_Member_ARIFAH_GYM_" . date('d-m-Y') . ".xls";
     header("Content-Type: application/vnd.ms-excel");
     header("Content-Disposition: attachment; filename=\"$filename\"");
@@ -490,10 +541,56 @@ Route::get('/cetak-laporan-kasir', function (Request $request) {
         return $item;
     });
 
-    if ($request->query('format') == 'pdf') {
+    $format = $request->query('format', 'excel');
+
+    if ($format == 'pdf') {
         return view('laporan_kasir_pdf', compact('data', 'dateFilterText', 'additionalFilterText'));
     }
 
+    if ($format == 'csv') {
+        $filename = "Laporan_Kasir_Cepat_ARIFAH_GYM_" . date('d-m-Y') . ".csv";
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
+
+        $callback = function() use ($data) {
+            $file = fopen('php://output', 'w');
+
+            // Add BOM for Excel UTF-8 support
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Header
+            fputcsv($file, ['No', 'ID', 'Order ID', 'Tanggal Bayar', 'Nama Tamu', 'Produk', 'Metode', 'Nominal']);
+
+            $no = 1;
+            foreach ($data as $row) {
+                $tanggal = \Carbon\Carbon::parse($row->payment_date)->format('d/m/Y H:i');
+
+                fputcsv($file, [
+                    $no,
+                    $row->id,
+                    $row->order_id,
+                    $tanggal,
+                    $row->guest_name,
+                    $row->product_name,
+                    $row->payment_method,
+                    $row->amount
+                ]);
+                $no++;
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // Excel format (default)
     $filename = "Laporan_Kasir_Cepat_ARIFAH_GYM_" . date('d-m-Y') . ".xls";
     header("Content-Type: application/vnd.ms-excel");
     header("Content-Disposition: attachment; filename=\"$filename\"");
@@ -589,10 +686,57 @@ Route::get('/cetak-laporan-pengeluaran', function (Request $request) {
     
     $data = $query->orderBy('expense_date', 'asc')->get();
 
-    if ($request->query('format') == 'pdf') {
+    $format = $request->query('format', 'excel');
+
+    if ($format == 'pdf') {
         return view('laporan_pengeluaran_pdf', compact('data', 'dateFilterText', 'additionalFilterText'));
     }
 
+    if ($format == 'csv') {
+        $filename = "Laporan_Pengeluaran_ARIFAH_GYM_" . date('d-m-Y') . ".csv";
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
+
+        $callback = function() use ($data) {
+            $file = fopen('php://output', 'w');
+
+            // Add BOM for Excel UTF-8 support
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Header
+            fputcsv($file, ['No', 'Tanggal', 'Kategori', 'Item/Barang', 'Qty', 'Total Harga', 'No. Nota', 'Dicatat Oleh']);
+
+            $no = 1;
+            foreach ($data as $row) {
+                $tanggal = \Carbon\Carbon::parse($row->expense_date)->format('d/m/Y');
+                $creatorName = $row->creator ? $row->creator->name : 'User Dihapus';
+
+                fputcsv($file, [
+                    $no,
+                    $tanggal,
+                    $row->category,
+                    $row->item,
+                    $row->quantity,
+                    $row->amount,
+                    $row->receipt_number ?? '-',
+                    $creatorName
+                ]);
+                $no++;
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // Excel format (default)
     $filename = "Laporan_Pengeluaran_ARIFAH_GYM_" . date('d-m-Y') . ".xls";
     header("Content-Type: application/vnd.ms-excel");
     header("Content-Disposition: attachment; filename=\"$filename\"");
@@ -668,7 +812,7 @@ Route::get('/export-members', function (Request $request) {
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
             
             // Header
-            fputcsv($file, ['No', 'ID', 'Nama', 'NIK', 'Fingerprint', 'Email', 'WhatsApp', 'Tipe Member', 'Tanggal Bergabung', 'Tanggal Berakhir', 'Status']);
+            fputcsv($file, ['No', 'ID', 'Nama', 'WhatsApp', 'Tipe Member', 'Tanggal Bergabung', 'Tanggal Berakhir', 'Status']);
             
             $no = 1;
             foreach ($data as $row) {
@@ -692,9 +836,6 @@ Route::get('/export-members', function (Request $request) {
                     $no,
                     $row->id,
                     $row->name,
-                    $row->nik ?? '-',
-                    $row->fingerprint_id ?? '-',
-                    $row->email,
                     $row->phone,
                     $row->type,
                     $joinDate,
@@ -805,10 +946,60 @@ Route::get('/export-attendance', function (Request $request) {
     
     $data = $query->orderBy('created_at', 'asc')->get();
 
-    if ($request->query('format') == 'pdf') {
+    $format = $request->query('format', 'excel');
+
+    if ($format == 'pdf') {
         return view('attendance_pdf', compact('data', 'dateFilterText'));
     }
 
+    if ($format == 'csv') {
+        $filename = "Log_Absensi_ARIFAH_GYM_" . date('d-m-Y') . ".csv";
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
+
+        $callback = function() use ($data) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for Excel UTF-8 support
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Header
+            fputcsv($file, ['No', 'Nama Member', 'Tipe Member', 'WhatsApp', 'Tanggal Absen', 'Jam Absen', 'Hari']);
+            
+            $no = 1;
+            foreach ($data as $row) {
+                $memberName = $row->member ? $row->member->name : 'Member Dihapus';
+                $memberType = $row->member ? $row->member->type : '-';
+                $memberPhone = $row->member ? $row->member->phone : '-';
+                $tanggal = \Carbon\Carbon::parse($row->created_at)->format('d/m/Y');
+                $jam = \Carbon\Carbon::parse($row->created_at)->format('H:i');
+                $hari = \Carbon\Carbon::parse($row->created_at)->translatedFormat('l');
+                
+                fputcsv($file, [
+                    $no,
+                    $memberName,
+                    $memberType,
+                    $memberPhone,
+                    $tanggal,
+                    $jam,
+                    $hari
+                ]);
+                $no++;
+            }
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // Excel format (default)
     $filename = "Log_Absensi_ARIFAH_GYM_" . date('d-m-Y') . ".xls";
     header("Content-Type: application/vnd.ms-excel");
     header("Content-Disposition: attachment; filename=\"$filename\"");

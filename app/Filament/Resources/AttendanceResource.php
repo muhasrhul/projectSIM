@@ -215,6 +215,70 @@ class AttendanceResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ])
             ->headerActions([
+                Tables\Actions\Action::make('export_csv')
+                    ->label('Export CSV')
+                    ->color('warning')
+                    ->icon('heroicon-o-document-download')
+                    ->form([
+                        Forms\Components\Card::make()->schema([
+                            Forms\Components\Select::make('filter_type')
+                                ->label('Jenis Filter Tanggal')
+                                ->options([
+                                    'all' => 'Semua Data (Tanpa Filter)',
+                                    'single' => 'Tanggal Tunggal',
+                                    'range' => 'Rentang Tanggal',
+                                ])
+                                ->default('all')
+                                ->reactive()
+                                ->required(),
+                            
+                            Forms\Components\DatePicker::make('single_date')
+                                ->label('Pilih Tanggal')
+                                ->visible(fn ($get) => $get('filter_type') === 'single')
+                                ->required(fn ($get) => $get('filter_type') === 'single')
+                                ->closeOnDateSelection(),
+                            
+                            Forms\Components\DatePicker::make('start_date')
+                                ->label('Tanggal Mulai')
+                                ->visible(fn ($get) => $get('filter_type') === 'range')
+                                ->required(fn ($get) => $get('filter_type') === 'range')
+                                ->closeOnDateSelection(),
+                            
+                            Forms\Components\DatePicker::make('end_date')
+                                ->label('Tanggal Akhir')
+                                ->visible(fn ($get) => $get('filter_type') === 'range')
+                                ->required(fn ($get) => $get('filter_type') === 'range')
+                                ->afterOrEqual('start_date')
+                                ->closeOnDateSelection(),
+                        ])
+                    ])
+                    ->action(function (array $data) {
+                        $params = ['format' => 'csv'];
+                        
+                        if ($data['filter_type'] === 'single' && !empty($data['single_date'])) {
+                            $params['filter_type'] = 'single';
+                            $params['single_date'] = $data['single_date'];
+                        } elseif ($data['filter_type'] === 'range' && !empty($data['start_date']) && !empty($data['end_date'])) {
+                            $params['filter_type'] = 'range';
+                            $params['start_date'] = $data['start_date'];
+                            $params['end_date'] = $data['end_date'];
+                        }
+                        
+                        $url = route('export-attendance', $params);
+                        
+                        // Show notification
+                        \Filament\Notifications\Notification::make()
+                            ->title('CSV berhasil dibuat')
+                            ->success()
+                            ->send();
+                            
+                        // Redirect to download URL
+                        return redirect()->away($url);
+                    })
+                    ->modalHeading('Filter Export CSV')
+                    ->modalSubheading('Pilih filter tanggal untuk data absensi yang akan di-export ke CSV')
+                    ->modalButton('Export CSV'),
+
                 Tables\Actions\Action::make('export_excel')
                     ->label('Export Excel')
                     ->hidden()
