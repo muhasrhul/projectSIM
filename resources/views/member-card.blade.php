@@ -236,12 +236,7 @@
             ctx.fillText(memberData.expiryDate.toUpperCase(), lx, y);
 
             // QR Code
-            renderQRCode(ctx, qx, qy, qs, qr);
-
-            // Stempel EXPIRED
-            if (memberData.isExpired) {
-                renderExpiredStamp(ctx, W, H);
-            }
+            renderQRCode(ctx, qx, qy, qs, qr, W, H);
         }
 
         function renderPortraitLayout(ctx, W, H) {
@@ -290,7 +285,7 @@
             const qSize = 300;
             const qX = centerX - qSize / 2;
             const qY = y;
-            renderQRCode(ctx, qX, qY, qSize, 16);
+            renderQRCode(ctx, qX, qY, qSize, 16, W, H);
             y += qSize + gap + 10;
 
             // Member name (centered)
@@ -335,11 +330,6 @@
 
             // Reset text align
             ctx.textAlign = "left";
-
-            // Stempel EXPIRED
-            if (memberData.isExpired) {
-                renderExpiredStamp(ctx, W, H);
-            }
         }
 
         function wrapText(ctx, text, maxWidth) {
@@ -361,7 +351,7 @@
             return lines;
         }
 
-        function renderQRCode(ctx, x, y, size, radius) {
+        function renderQRCode(ctx, x, y, size, radius, W, H) {
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${memberData.qrData}`;
             const img = document.getElementById('qrSrc');
             
@@ -383,15 +373,32 @@
 
                 const pad = 20;
                 ctx.drawImage(img, x + pad, y + pad, size - pad*2, size - pad*2);
+                
+                // Render EXPIRED stamp DI ATAS QR code (setelah QR di-render)
+                if (memberData.isExpired) {
+                    renderExpiredStamp(ctx, W, H);
+                }
             };
             
             img.src = qrUrl;
         }
 
         function renderExpiredStamp(ctx, W, H) {
-            ctx.save();
-            ctx.translate(W / 2, H / 2);
-            ctx.rotate(-15 * Math.PI / 180);
+            // Posisi di atas QR code (landscape) atau di tengah atas (portrait)
+            const dimensions = getCardDimensions();
+            
+            if (dimensions.orientation === 'landscape') {
+                // Landscape: Di atas QR code (kanan atas)
+                ctx.save();
+                ctx.translate(780, 180); // Posisi di atas QR
+                ctx.rotate(-15 * Math.PI / 180);
+            } else {
+                // Portrait: Di tengah kartu
+                ctx.save();
+                ctx.translate(W / 2, H / 2 - 50);
+                ctx.rotate(-15 * Math.PI / 180);
+            }
+            
             ctx.strokeStyle = "#ef4444";
             ctx.lineWidth = 8;
             ctx.beginPath();
