@@ -23,17 +23,17 @@
         #scanner-box {
             position: relative; width: 100%; max-width: 320px;
             aspect-ratio: 1; border-radius: 1.5rem; overflow: hidden;
-            border: 2px solid rgba(9,146,194,0.4);
-            box-shadow: 0 0 40px rgba(9,146,194,0.2);
+            border: 2px solid rgba(245,158,11,0.4);
+            box-shadow: 0 0 40px rgba(245,158,11,0.2);
         }
         #video { width: 100%; height: 100%; object-fit: cover; display: block; }
         .scan-line {
             position: absolute; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, #0992C2, transparent);
+            background: linear-gradient(90deg, transparent, #F59E0B, transparent);
             animation: scan 2s linear infinite;
         }
         @keyframes scan { 0% { top: 5%; } 50% { top: 90%; } 100% { top: 5%; } }
-        .corner { position: absolute; width: 20px; height: 20px; border-color: #0992C2; border-style: solid; }
+        .corner { position: absolute; width: 20px; height: 20px; border-color: #F59E0B; border-style: solid; }
         .corner-tl { top: 12px; left: 12px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
         .corner-tr { top: 12px; right: 12px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
         .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
@@ -48,7 +48,7 @@
     <div class="w-full max-w-sm">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-hero tracking-tighter">ARIFAH <span class="text-[#0992C2]">GYM</span></h1>
+            <h1 class="text-4xl font-hero tracking-tighter">ARIFAH <span class="text-[#F59E0B]">GYM</span></h1>
             <div class="flex items-center justify-center gap-3 mt-2">
                 <div class="h-px w-8 bg-zinc-800"></div>
                 <p class="text-zinc-500 text-[10px] uppercase tracking-[0.5em] font-black italic">SCAN QR ABSENSI</p>
@@ -80,7 +80,7 @@
         <!-- Mode Toggle -->
         <div class="mt-4 flex items-center justify-center gap-4">
             <button onclick="setMode('camera')" id="btn-camera"
-                class="text-[#0992C2] text-xs uppercase tracking-widest font-bold transition-colors">
+                class="text-[#F59E0B] text-xs uppercase tracking-widest font-bold transition-colors">
                 <i class="fa-solid fa-camera mr-1"></i> Kamera
             </button>
             <div class="h-3 w-px bg-zinc-700"></div>
@@ -100,9 +100,9 @@
                 Scan barcode kartu member dengan alat scanner
             </p>
             <div class="flex flex-col items-center gap-4">
-                <div class="w-20 h-20 rounded-full border-2 border-[#0992C2]/40 flex items-center justify-center"
-                    style="box-shadow: 0 0 30px rgba(9,146,194,0.15)">
-                    <i class="fa-solid fa-barcode text-[#0992C2] text-3xl"></i>
+                <div class="w-20 h-20 rounded-full border-2 border-[#F59E0B]/40 flex items-center justify-center"
+                    style="box-shadow: 0 0 30px rgba(245,158,11,0.15)">
+                    <i class="fa-solid fa-barcode text-[#F59E0B] text-3xl"></i>
                 </div>
                 <div id="hw-status" class="text-center text-zinc-500 text-xs uppercase tracking-widest font-bold">
                     <i class="fa-solid fa-circle-dot mr-1 text-green-500"></i> Siap menerima scan...
@@ -139,7 +139,7 @@
         }).then(stream => {
             video.srcObject = stream;
             video.play();
-            statusText.innerHTML = '<i class="fa-solid fa-qrcode mr-1 text-[#0992C2]"></i> Siap scan...';
+            statusText.innerHTML = '<i class="fa-solid fa-qrcode mr-1 text-[#F59E0B]"></i> Siap scan...';
             requestAnimationFrame(tick);
         }).catch(() => {
             statusText.innerHTML = '<i class="fa-solid fa-exclamation-triangle mr-1 text-red-500"></i> Kamera tidak bisa diakses';
@@ -172,9 +172,9 @@
 
         function processAbsen(memberId) {
             cooldown = true;
-            statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1 text-[#0992C2]"></i> Memproses...';
+            statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1 text-[#F59E0B]"></i> Memproses...';
             const hwStatus = document.getElementById('hw-status');
-            if (hwStatus) hwStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1 text-[#0992C2]"></i> Memproses...';
+            if (hwStatus) hwStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1 text-[#F59E0B]"></i> Memproses...';
 
             fetch('/absen-qr', {
                 method: 'POST',
@@ -205,7 +205,7 @@
             .finally(() => {
                 setTimeout(() => {
                     cooldown = false;
-                    statusText.innerHTML = '<i class="fa-solid fa-qrcode mr-1 text-[#0992C2]"></i> Siap scan...';
+                    statusText.innerHTML = '<i class="fa-solid fa-qrcode mr-1 text-[#F59E0B]"></i> Siap scan...';
                     const hwStatus = document.getElementById('hw-status');
                     if (hwStatus) hwStatus.innerHTML = '<i class="fa-solid fa-circle-dot mr-1 text-green-500"></i> Siap menerima scan...';
                     if (currentMode === 'scanner') document.getElementById('scanner-input').focus();
@@ -214,7 +214,7 @@
         }
 
         function showSuccess(data) {
-            const badgeIcon = data.badge === 'ARIFAH WARRIOR' ? 'fa-fire text-[#0992C2]' : 'fa-medal text-blue-400';
+            const badgeIcon = data.badge === 'ARIFAH WARRIOR' ? 'fa-fire text-[#F59E0B]' : 'fa-medal text-blue-400';
             resultArea.innerHTML = `
                 <div class="result-card premium-card p-6 rounded-[2.5rem] text-center border border-green-500/20">
                     <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -252,7 +252,7 @@
                 </div>`;
             resultArea.classList.remove('hidden');
             setTimeout(() => resultArea.classList.add('hidden'), 4000);
-            statusText.innerHTML = '<i class="fa-solid fa-qrcode mr-1 text-[#0992C2]"></i> Siap scan...';
+            statusText.innerHTML = '<i class="fa-solid fa-qrcode mr-1 text-[#F59E0B]"></i> Siap scan...';
         }
 
         // ── MODE TOGGLE ──────────────────────────────────────────────
@@ -268,13 +268,13 @@
             if (mode === 'camera') {
                 cameraCard.classList.remove('hidden');
                 hardwareCard.classList.add('hidden');
-                btnCamera.classList.replace('text-zinc-600', 'text-[#0992C2]');
-                btnScanner.classList.replace('text-[#0992C2]', 'text-zinc-600');
+                btnCamera.classList.replace('text-zinc-600', 'text-[#F59E0B]');
+                btnScanner.classList.replace('text-[#F59E0B]', 'text-zinc-600');
             } else {
                 cameraCard.classList.add('hidden');
                 hardwareCard.classList.remove('hidden');
-                btnScanner.classList.replace('text-zinc-600', 'text-[#0992C2]');
-                btnCamera.classList.replace('text-[#0992C2]', 'text-zinc-600');
+                btnScanner.classList.replace('text-zinc-600', 'text-[#F59E0B]');
+                btnCamera.classList.replace('text-[#F59E0B]', 'text-zinc-600');
                 // Fokus ke input tersembunyi agar scanner langsung terbaca
                 document.getElementById('scanner-input').focus();
             }
