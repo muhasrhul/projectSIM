@@ -10,6 +10,7 @@ use App\Models\Attendance;
 use App\Models\Transaction; 
 use App\Http\Controllers\FrontMemberController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\MemberCardController;
 use Filament\Notifications\Notification;
 
 /*
@@ -22,6 +23,9 @@ use Filament\Notifications\Notification;
 Route::get('/login', function () {
     return redirect('/admin/login');
 })->name('login');
+
+// ROUTE KARTU MEMBER DIGITAL (PUBLIC - TANPA AUTH)
+Route::get('/card/{token}', [MemberCardController::class, 'show'])->name('member.card');
 
 // 1. HALAMAN UTAMA - Redirect ke admin login
 Route::get('/', function () {

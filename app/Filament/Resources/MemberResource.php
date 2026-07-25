@@ -708,12 +708,12 @@ class MemberResource extends Resource
                 //     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('kartu_member')
-                    ->label('Kartu')
-                    ->getStateUsing(fn () => 'Lihat Kartu')
-                    ->url(fn ($record) => route('member.card.download', $record->id))
+                    ->label('Kartu Digital')
+                    ->getStateUsing(fn () => '🔗 Link Kartu')
+                    ->url(fn ($record) => route('member.card', $record->card_token))
                     ->openUrlInNewTab()
-                    ->color('primary')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->color('warning')
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 // --- KOLOM STATUS YANG SUDAH DIPERBARUI LOGIKANYA ---
                 Tables\Columns\BadgeColumn::make('status')

@@ -130,6 +130,13 @@ class Member extends Model
     {
         parent::boot();
 
+        // Auto-generate card_token saat member dibuat
+        static::creating(function ($member) {
+            if (empty($member->card_token)) {
+                $member->card_token = \Illuminate\Support\Str::random(32);
+            }
+        });
+
         // OBSERVER DINONAKTIFKAN - Transaksi sekarang dihandle di CreateMember.php dan EditMember.php
         // untuk menghindari duplikasi dan memastikan konsistensi data
         
