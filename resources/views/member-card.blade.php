@@ -65,6 +65,20 @@
             qrData: "{{ $member->id }}"
         };
 
+        // Deteksi orientasi dan ukuran layar
+        function getCardDimensions() {
+            const isMobile = window.innerWidth <= 768;
+            const isPortrait = window.innerHeight > window.innerWidth;
+            
+            if (isMobile && isPortrait) {
+                // Mobile Portrait: Kartu vertikal
+                return { width: 600, height: 950, orientation: 'portrait' };
+            } else {
+                // Desktop/Landscape: Kartu horizontal
+                return { width: 1050, height: 550, orientation: 'landscape' };
+            }
+        }
+
         WebFont.load({
             google: { families: ['Poppins:400,700,900,900i'] },
             active: function() { generateCard(); },
@@ -74,13 +88,16 @@
         async function generateCard() {
             const canvas = document.getElementById('memberCard');
             const ctx = canvas.getContext('2d');
-
-            canvas.width = 1050;
-            canvas.height = 550;
+            
+            const dimensions = getCardDimensions();
+            canvas.width = dimensions.width;
+            canvas.height = dimensions.height;
 
             await document.fonts.ready;
 
-            const W = 1050, H = 550, R = 48;
+            const W = dimensions.width;
+            const H = dimensions.height;
+            const R = dimensions.orientation === 'portrait' ? 32 : 48;
 
             // 1. Background
             ctx.save();
@@ -112,7 +129,11 @@
             // 4. Dumbbell watermark
             ctx.save();
             ctx.globalAlpha = 0.055;
-            ctx.translate(160, H / 2 + 30);
+            if (dimensions.orientation === 'portrait') {
+                ctx.translate(W / 2, H / 2 - 100);
+            } else {
+                ctx.translate(160, H / 2 + 30);
+            }
             ctx.rotate(-12 * Math.PI / 180);
             ctx.fillStyle = "#ffffff";
             const bar = { w: 160, h: 18 };
@@ -136,6 +157,16 @@
             ctx.stroke();
             ctx.restore();
 
+            if (dimensions.orientation === 'portrait') {
+                // LAYOUT VERTIKAL (Mobile Portrait)
+                renderPortraitLayout(ctx, W, H);
+            } else {
+                // LAYOUT HORIZONTAL (Desktop/Landscape)
+                renderLandscapeLayout(ctx, W, H);
+            }
+        }
+
+        function renderLandscapeLayout(ctx, W, H) {
             const lx = 50;
             const maxLW = 490;
             const qx = 560, qy = 55, qs = 440, qr = 22;
@@ -187,7 +218,7 @@
             ctx.fillText("ID: " + memberData.id, lx, y);
             y += 18 + gap;
 
-            // Divider + berlaku hingga label
+            // Divider
             ctx.strokeStyle = "rgba(255,255,255,0.08)";
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -204,27 +235,133 @@
             ctx.font = "900 38px Poppins";
             ctx.fillText(memberData.expiryDate.toUpperCase(), lx, y);
 
-            // Stempel EXPIRED jika expired
-            if (memberData.isExpired) {
-                ctx.save();
-                ctx.translate(W / 2, H / 2);
-                ctx.rotate(-15 * Math.PI / 180);
-                ctx.strokeStyle = "#ef4444";
-                ctx.lineWidth = 8;
-                ctx.beginPath();
-                ctx.roundRect(-180, -55, 360, 110, 12);
-                ctx.stroke();
-                ctx.fillStyle = "rgba(239,68,68,0.12)";
-                ctx.fill();
-                ctx.fillStyle = "#ef4444";
-                ctx.font = "900 72px Poppins";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText("EXPIRED", 0, 0);
-                ctx.restore();
-            }
+            // QR Code
+            renderQRCode(ctx, qx, qy, qs, qr);
 
-            // Generate QR Code dan render
+            // Stempel EXPIRED
+            if (memberData.isExpired) {
+                renderExpiredStamp(ctx, W, H);
+            }
+        }
+
+        function renderPortraitLayout(ctx, W, H) {
+            const centerX = W / 2;
+            const padding = 40;
+            const maxWidth = W - (padding * 2);
+            const gap = 25;
+            let y = 50;
+
+            // Badge pill (centered)
+            const paket = memberData.type.toUpperCase();
+            ctx.font = "700 16px Poppins";
+            const pw = ctx.measureText(paket).width;
+            const pillPad = 12, pillH = 32, pillR = 16;
+            const pillW = pw + pillPad * 2;
+            const pillX = centerX - pillW / 2;
+            ctx.strokeStyle = "#F59E0B";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(pillX, y, pillW, pillH, pillR);
+            ctx.stroke();
+            ctx.fillStyle = "rgba(245,158,11,0.12)";
+            ctx.beginPath();
+            ctx.roundRect(pillX, y, pillW, pillH, pillR);
+            ctx.fill();
+            ctx.fillStyle = "#F59E0B";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(paket, centerX, y + pillH / 2);
+            ctx.textBaseline = "top";
+            y += pillH + gap + 20;
+
+            // Gym name (centered)
+            ctx.fillStyle = "#F59E0B";
+            ctx.font = "italic 900 48px Poppins";
+            ctx.fillText("ARIFAH GYM", centerX, y);
+            y += 48 + gap;
+
+            // Official member (centered)
+            ctx.fillStyle = "rgba(255,255,255,0.50)";
+            ctx.font = "700 16px Poppins";
+            ctx.fillText("OFFICIAL MEMBER", centerX, y);
+            y += 16 + gap + 10;
+
+            // QR Code (centered, larger)
+            const qSize = 300;
+            const qX = centerX - qSize / 2;
+            const qY = y;
+            renderQRCode(ctx, qX, qY, qSize, 16);
+            y += qSize + gap + 10;
+
+            // Member name (centered)
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "900 36px Poppins";
+            const nameLines = wrapText(ctx, memberData.name.toUpperCase(), maxWidth);
+            nameLines.forEach(line => {
+                ctx.fillText(line, centerX, y);
+                y += 36 + 8;
+            });
+            y += gap - 8;
+
+            // Member ID (centered)
+            ctx.fillStyle = "rgba(255,255,255,0.35)";
+            ctx.font = "400 16px monospace";
+            ctx.fillText("ID: " + memberData.id, centerX, y);
+            y += 16 + gap;
+
+            // Divider
+            ctx.strokeStyle = "rgba(255,255,255,0.08)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            const dividerMargin = 80;
+            ctx.moveTo(dividerMargin, y - 8);
+            ctx.lineTo(W - dividerMargin, y - 8);
+            ctx.stroke();
+            
+            // Berlaku hingga (centered)
+            ctx.fillStyle = "rgba(255,255,255,0.40)";
+            ctx.font = "700 14px Poppins";
+            ctx.fillText("BERLAKU HINGGA", centerX, y);
+            y += 14 + gap - 5;
+
+            // Expiry date (centered)
+            ctx.fillStyle = memberData.isExpired ? '#ef4444' : '#F59E0B';
+            ctx.font = "900 32px Poppins";
+            const expiryLines = wrapText(ctx, memberData.expiryDate.toUpperCase(), maxWidth);
+            expiryLines.forEach(line => {
+                ctx.fillText(line, centerX, y);
+                y += 32 + 5;
+            });
+
+            // Reset text align
+            ctx.textAlign = "left";
+
+            // Stempel EXPIRED
+            if (memberData.isExpired) {
+                renderExpiredStamp(ctx, W, H);
+            }
+        }
+
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                const testLine = currentLine + ' ' + words[i];
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth) {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        function renderQRCode(ctx, x, y, size, radius) {
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${memberData.qrData}`;
             const img = document.getElementById('qrSrc');
             
@@ -234,22 +371,46 @@
                 ctx.shadowBlur = 45;
                 ctx.fillStyle = "#ffffff";
                 ctx.beginPath();
-                ctx.roundRect(qx, qy, qs, qs, qr);
+                ctx.roundRect(x, y, size, size, radius);
                 ctx.fill();
                 ctx.restore();
 
                 ctx.strokeStyle = 'rgba(245,158,11,0.55)';
                 ctx.lineWidth = 3;
                 ctx.beginPath();
-                ctx.roundRect(qx, qy, qs, qs, qr);
+                ctx.roundRect(x, y, size, size, radius);
                 ctx.stroke();
 
                 const pad = 20;
-                ctx.drawImage(img, qx + pad, qy + pad, qs - pad*2, qs - pad*2);
+                ctx.drawImage(img, x + pad, y + pad, size - pad*2, size - pad*2);
             };
             
             img.src = qrUrl;
         }
+
+        function renderExpiredStamp(ctx, W, H) {
+            ctx.save();
+            ctx.translate(W / 2, H / 2);
+            ctx.rotate(-15 * Math.PI / 180);
+            ctx.strokeStyle = "#ef4444";
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.roundRect(-180, -55, 360, 110, 12);
+            ctx.stroke();
+            ctx.fillStyle = "rgba(239,68,68,0.12)";
+            ctx.fill();
+            ctx.fillStyle = "#ef4444";
+            ctx.font = "900 72px Poppins";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("EXPIRED", 0, 0);
+            ctx.restore();
+        }
+
+        // Re-render saat orientasi berubah
+        window.addEventListener('resize', function() {
+            generateCard();
+        });
     </script>
 </body>
 </html>
