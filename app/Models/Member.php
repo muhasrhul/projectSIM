@@ -23,11 +23,21 @@ class Member extends Model
      */
     public function getCardTokenAttribute($value)
     {
-        // Jika token kosong, generate dan save
-        if (empty($value)) {
+        // Jika token kosong dan record sudah ada di database
+        if (empty($value) && $this->exists) {
             $token = \Illuminate\Support\Str::random(32);
+            
+            // Cek apakah token unique (sangat jarang collision, tapi untuk jaga-jaga)
+            while (self::where('card_token', $token)->exists()) {
+                $token = \Illuminate\Support\Str::random(32);
+            }
+            
+            // Update tanpa trigger accessor lagi
+            \DB::table('members')
+                ->where('id', $this->id)
+                ->update(['card_token' => $token]);
+            
             $this->attributes['card_token'] = $token;
-            $this->saveQuietly(); // Save tanpa trigger events
             return $token;
         }
         
