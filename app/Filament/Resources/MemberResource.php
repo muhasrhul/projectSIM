@@ -709,10 +709,21 @@ class MemberResource extends Resource
 
                 Tables\Columns\TextColumn::make('kartu_member')
                     ->label('Kartu Digital')
-                    ->getStateUsing(fn ($record) => $record->card_token ? '🔗 Link Kartu' : '⚠️ Token Kosong')
-                    ->url(fn ($record) => $record->card_token ? route('member.card', $record->card_token) : null)
+                    ->getStateUsing(function ($record) {
+                        // Akses langsung dari attributes tanpa trigger accessor
+                        $token = $record->getAttributes()['card_token'] ?? null;
+                        return $token ? '🔗 Link Kartu' : '⚠️ Generate Token';
+                    })
+                    ->url(function ($record) {
+                        // Akses langsung dari attributes
+                        $token = $record->getAttributes()['card_token'] ?? null;
+                        return $token ? route('member.card', $token) : null;
+                    })
                     ->openUrlInNewTab()
-                    ->color(fn ($record) => $record->card_token ? 'warning' : 'danger')
+                    ->color(function ($record) {
+                        $token = $record->getAttributes()['card_token'] ?? null;
+                        return $token ? 'warning' : 'secondary';
+                    })
                     ->toggleable(isToggledHiddenByDefault: false),
 
                 // --- KOLOM STATUS YANG SUDAH DIPERBARUI LOGIKANYA ---
