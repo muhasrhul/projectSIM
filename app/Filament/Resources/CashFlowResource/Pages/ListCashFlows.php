@@ -157,12 +157,12 @@ class ListCashFlows extends ListRecords
                 ])
                 ->action(function (array $data) {
                     if ($data['format'] === 'csv') {
-                        return redirect()->to(route('export.pembukuan', [
+                        return redirect()->to(route('export.arus-kas', [
                             'period' => $data['period'],
                             'format' => 'csv',
                         ]));
                     }
-                    return redirect()->to(route('export.pembukuan', ['period' => $data['period']]));
+                    return redirect()->to(route('export.arus-kas', ['period' => $data['period']]));
                 })
                 ->modalButton('Unduh'),
         ];

@@ -1174,8 +1174,8 @@ Route::get('/member-card/{member}', function (Member $member) {
     return view('member-card-download', compact('member', 'isExpired', 'qrBase64'));
 })->middleware(['auth:web'])->name('member.card.download');
 
-// Export Pembukuan PDF - PROTECTED
-Route::middleware(['auth'])->get('/export/pembukuan', function (Request $request) {
+// Export Arus Kas PDF - PROTECTED
+Route::middleware(['auth'])->get('/export/arus-kas', function (Request $request) {
     $period = $request->get('period', 'today');
     $now = \Carbon\Carbon::now('Asia/Makassar');
     
@@ -1294,7 +1294,7 @@ Route::middleware(['auth'])->get('/export/pembukuan', function (Request $request
         return response()->stream($callback, 200, $headers);
     }
 
-    return view('laporan_pembukuan_pdf', [
+    return view('laporan_arus_kas_pdf', [
         'data' => $dataWithBalance,
         'periodLabel' => $periodLabel,
         'startDate' => $startDate,
@@ -1304,7 +1304,7 @@ Route::middleware(['auth'])->get('/export/pembukuan', function (Request $request
         'finalBalance' => $finalBalance,
         'generatedAt' => $now->format('d F Y, H:i') . ' WITA'
     ]);
-})->name('export.pembukuan');
+})->name('export.arus-kas');
 
 // Data chart laporan arus kas
 Route::get('/admin/laporan-arus-kas-data', function (\Illuminate\Http\Request $request) {

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Pembukuan - ARIFAH GYM</title>
+    <title>Laporan Arus Kas - ARIFAH GYM</title>
     <style>
         @page {
             size: A4 landscape;
@@ -82,7 +82,7 @@
 <body onload="window.print()">
     <div class="header">
         <h1 style="margin: 0; font-size: 24px;">ARIFAH GYM MAKASSAR</h1>
-        <h2 style="margin: 5px 0; color: #555; font-size: 18px;">LAPORAN PEMBUKUAN</h2>
+        <h2 style="margin: 5px 0; color: #555; font-size: 18px;">LAPORAN ARUS KAS</h2>
         <h3 style="margin: 5px 0; color: #f97316; font-size: 16px;">{{ $periodLabel }}</h3>
         <p style="margin: 0; font-size: 12px;">Tanggal Cetak: {{ $generatedAt }}</p>
     </div>

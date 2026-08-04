@@ -9,7 +9,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-white">Export Laporan Pembukuan</h3>
+                    <h3 class="text-lg font-bold text-white">Export Laporan Arus Kas</h3>
                     <p class="text-green-100 text-sm">Pilih periode dan download laporan dalam format PDF</p>
                 </div>
             </div>

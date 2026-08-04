@@ -313,7 +313,7 @@ class TelegramHelper
     }
 
     /**
-     * Format pesan laporan pembukuan harian ke owner
+     * Format pesan laporan arus kas harian ke owner
      */
     public static function sendDailyCashFlowReport($date, $cashFlows, $totalIncome, $totalExpense, $netBalance)
     {
@@ -322,7 +322,7 @@ class TelegramHelper
         $tanggalUrl = $date->format('Y-m-d'); // Format untuk URL
         
         // Buat pesan laporan
-        $message = "📊 *LAPORAN PEMBUKUAN HARIAN*\n";
+        $message = "📊 *LAPORAN ARUS KAS HARIAN*\n";
         $message .= "🗓️ Tanggal: *{$tanggal}*\n\n";
         
         // RINGKASAN KEUANGAN
@@ -332,7 +332,7 @@ class TelegramHelper
         $message .= "└─ Saldo Bersih: Rp " . number_format($netBalance, 0, ',', '.') . "\n\n";
         
         // LINK EXPORT PDF dengan tanggal spesifik (protected dengan auth)
-        $exportUrl = "https://arifahgym.cloud/export/pembukuan?period=single&date={$tanggalUrl}";
+        $exportUrl = "https://arifahgym.cloud/export/arus-kas?period=single&date={$tanggalUrl}";
         $message .= "📄 *EXPORT LAPORAN PDF*\n";
         $message .= "Klik link berikut untuk download:\n";
         $message .= "{$exportUrl}\n\n";

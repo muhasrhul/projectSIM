@@ -51,7 +51,7 @@ class Kernel extends ConsoleKernel
         //     ->appendOutputTo(storage_path('logs/whatsapp-reminders.log'));
 
         // ========================================
-        // AUTO KIRIM LAPORAN PEMBUKUAN HARIAN
+        // AUTO KIRIM LAPORAN ARUS KAS HARIAN
         // ========================================
         
         // PRODUCTION: Jalankan setiap hari jam 23:30 malam (akhir hari)

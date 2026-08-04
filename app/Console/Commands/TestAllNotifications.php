@@ -33,7 +33,7 @@ class TestAllNotifications extends Command
         // 1. Test Laporan H-1 Expired
         $this->testReminderH1();
         
-        // 2. Test Laporan Pembukuan Harian
+        // 2. Test Laporan Arus Kas Harian
         $this->testDailyCashFlow();
         
         // 3. Test Absen Member
@@ -88,11 +88,11 @@ class TestAllNotifications extends Command
     }
     
     /**
-     * Test 2: Laporan Pembukuan Harian
+     * Test 2: Laporan Arus Kas Harian
      */
     private function testDailyCashFlow()
     {
-        $this->info('2️⃣ Testing Laporan Pembukuan Harian...');
+        $this->info('2️⃣ Testing Laporan Arus Kas Harian...');
         
         $today = Carbon::now('Asia/Makassar');
         $cashFlows = CashFlow::whereDate('date', $today->format('Y-m-d'))->get();

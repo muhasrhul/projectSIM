@@ -60,7 +60,7 @@ class ExportWidget extends Widget implements HasForms
     {
         $data = $this->form->getState();
         $period = $data['period'] ?? 'today';
-        $url = route('export.pembukuan', ['period' => $period]);
+        $url = route('export.arus-kas', ['period' => $period]);
         
         // Buka di tab baru menggunakan JavaScript
         $this->dispatch('open-url', url: $url);
