@@ -974,10 +974,11 @@ Route::get('/export-attendance', function (Request $request) {
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
             
             // Header
-            fputcsv($file, ['No', 'Nama Member', 'Tipe Member', 'WhatsApp', 'Tanggal Absen', 'Jam Absen', 'Hari']);
+            fputcsv($file, ['No', 'ID Member', 'Nama Member', 'Tipe Member', 'WhatsApp', 'Tanggal Absen', 'Jam Absen', 'Hari']);
             
             $no = 1;
             foreach ($data as $row) {
+                $memberId = $row->member_id ?? '-';
                 $memberName = $row->member ? $row->member->name : 'Member Dihapus';
                 $memberType = $row->member ? $row->member->type : '-';
                 $memberPhone = $row->member ? $row->member->phone : '-';
@@ -987,6 +988,7 @@ Route::get('/export-attendance', function (Request $request) {
                 
                 fputcsv($file, [
                     $no,
+                    $memberId,
                     $memberName,
                     $memberType,
                     $memberPhone,
