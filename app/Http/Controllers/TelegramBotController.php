@@ -218,7 +218,7 @@ class TelegramBotController extends Controller
                 'member_id' => $member->id,
                 'order_id' => 'ACT-' . strtoupper(uniqid()),
                 'amount' => $paket->harga + ($paket->registration_fee ?? 0),
-                'type' => 'Aktivasi: ' . $paket->nama_paket,
+                'type' => 'Pendaftaran Baru: ' . $paket->nama_paket,
                 'payment_method' => 'Transfer Bank',
                 'payment_date' => $now,
                 'guest_name' => $member->name,
@@ -228,7 +228,7 @@ class TelegramBotController extends Controller
             CashFlow::createEntry(
                 'income',
                 'member',
-                'Aktivasi - ' . $member->name . ' (' . $paket->nama_paket . ')',
+                'Pendaftaran Baru - ' . $member->name . ' (' . $paket->nama_paket . ')',
                 $transaction->amount,
                 $transaction->id,
                 $now
