@@ -131,9 +131,86 @@ class TelegramHelper
         $message .= "├─ Paket   : {$paket}\n";
         $message .= "└─ Waktu   : " . \Carbon\Carbon::now('Asia/Makassar')->format('d M Y H:i') . "\n\n";
         $message .= "⚠️ STATUS: MENUNGGU AKTIVASI\n\n";
-        $message .= "💡 ACTION: Aktivasi di panel admin";
+        $message .= "💡 ACTION: Aktivasi di panel admin atau ketik:\n";
+        $message .= "`/aktivasi {$member->id}`";
         
-        return self::send($message);
+        return self::sendWithButton($message, $member->id, $paket);
+    }
+    
+    /**
+     * Kirim pesan dengan inline button aktivasi
+     */
+    private static function sendWithButton($message, $memberId, $paketNama)
+    {
+        $botToken = config('services.telegram.bot_token');
+        $chatId = config('services.telegram.chat_id');
+        
+        if (!$botToken || !$chatId) {
+            Log::warning('[Telegram] Bot token atau chat ID belum diset di config');
+            return false;
+        }
+        
+        // Cari paket ID
+        $paket = \App\Models\Paket::where('nama_paket', $paketNama)->first();
+        
+        $keyboard = null;
+        if ($paket) {
+            $keyboard = [
+                'inline_keyboard' => [
+                    [
+                        [
+                            'text' => '✅ Aktivasi Sekarang',
+                            'callback_data' => "aktivasi_{$memberId}_{$paket->id}"
+                        ]
+                    ]
+                ]
+            ];
+        }
+        
+        $data = [
+            'chat_id' => $chatId,
+            'text' => $message,
+            'parse_mode' => 'Markdown',
+        ];
+        
+        if ($keyboard) {
+            $data['reply_markup'] = json_encode($keyboard);
+        }
+        
+        $maxRetries = 3;
+        $attempt = 0;
+
+        while ($attempt < $maxRetries) {
+            $attempt++;
+            try {
+                $response = Http::timeout(10)
+                    ->post("https://api.telegram.org/bot{$botToken}/sendMessage", $data);
+                
+                if ($response->successful()) {
+                    Log::info('[Telegram] Notifikasi dengan button berhasil dikirim', [
+                        'chat_id' => $chatId,
+                        'member_id' => $memberId,
+                        'attempt' => $attempt,
+                    ]);
+                    return true;
+                } else {
+                    Log::warning('[Telegram] Gagal kirim notifikasi (attempt ' . $attempt . ')', [
+                        'response' => $response->body()
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::warning('[Telegram] Error kirim notifikasi (attempt ' . $attempt . ')', [
+                    'error' => $e->getMessage()
+                ]);
+            }
+
+            if ($attempt < $maxRetries) {
+                sleep(pow(2, $attempt - 1));
+            }
+        }
+
+        Log::error('[Telegram] Gagal kirim notifikasi setelah ' . $maxRetries . ' percobaan');
+        return false;
     }
     
     /**
