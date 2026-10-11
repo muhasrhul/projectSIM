@@ -724,7 +724,7 @@ class MemberResource extends Resource
                         $token = $record->getAttributes()['card_token'] ?? null;
                         return $token ? 'warning' : 'secondary';
                     })
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 // --- KOLOM STATUS YANG SUDAH DIPERBARUI LOGIKANYA ---
                 Tables\Columns\BadgeColumn::make('status')
