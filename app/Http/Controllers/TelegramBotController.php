@@ -219,7 +219,7 @@ class TelegramBotController extends Controller
                 'order_id' => 'ACT-' . strtoupper(uniqid()),
                 'amount' => $paket->harga + ($paket->registration_fee ?? 0),
                 'type' => 'Aktivasi: ' . $paket->nama_paket,
-                'payment_method' => 'QRIS',
+                'payment_method' => 'Transfer Bank',
                 'payment_date' => $now,
                 'guest_name' => $member->name,
             ]);
