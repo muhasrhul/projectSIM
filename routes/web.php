@@ -57,7 +57,7 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 Route::post('/update-payment-method', [FrontMemberController::class, 'updatePaymentMethod'])->name('member.updatePaymentMethod');
 
 // 3. PROSES ABSENSI
-Route::get('/absen', function () {
+Route::get('/absen-gym', function () {
     return view('absen');
 });
 
@@ -145,7 +145,7 @@ Route::post('/absen-qr', function (Request $request) {
     ]);
 });
 
-Route::post('/absen', function (Request $request) {
+Route::post('/absen-gym', function (Request $request) {
     // 1. Bersihkan Nomor HP
     $cleanPhone = preg_replace('/[^0-9]/', '', $request->phone);
     if (str_starts_with($cleanPhone, '62')) {

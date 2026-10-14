@@ -89,7 +89,7 @@
                 <i class="fa-solid fa-barcode mr-1"></i> Alat Scanner
             </button>
             <div class="h-3 w-px bg-zinc-700"></div>
-            <a href="/absen" class="text-zinc-600 text-xs uppercase tracking-widest hover:text-zinc-400 transition-colors">
+            <a href="/absen-gym" class="text-zinc-600 text-xs uppercase tracking-widest hover:text-zinc-400 transition-colors">
                 <i class="fa-solid fa-keyboard mr-1"></i> Manual
             </a>
         </div>

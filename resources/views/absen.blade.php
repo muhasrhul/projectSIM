@@ -196,7 +196,7 @@
                             <span class="group-hover/btn:text-black transition-colors duration-300">SIMPAN</span>
                         </span>
                     </button>
-                    <a href="/absen" class="bg-gradient-to-r from-[#F59E0B] to-[#F59E0B] hover:from-[#F59E0B] hover:to-[#F59E0B] py-5 rounded-[2rem] text-[11px] font-black text-black uppercase italic tracking-widest text-center flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-[0_10px_30px_-10px_rgba(245,158,11,0.5)] transform hover:scale-[1.02] active:scale-[0.98]">SELESAI</a>
+                    <a href="/absen-gym" class="bg-gradient-to-r from-[#F59E0B] to-[#F59E0B] hover:from-[#F59E0B] hover:to-[#F59E0B] py-5 rounded-[2rem] text-[11px] font-black text-black uppercase italic tracking-widest text-center flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-[0_10px_30px_-10px_rgba(245,158,11,0.5)] transform hover:scale-[1.02] active:scale-[0.98]">SELESAI</a>
                 </div>
             </div>
         @else
@@ -219,7 +219,7 @@
                         </div>
                     @endif
 
-                    <form action="/absen" method="POST" class="space-y-10" id="absenForm">
+                    <form action="/absen-gym" method="POST" class="space-y-10" id="absenForm">
                         @csrf
                         <div class="relative group">
                             <div class="absolute left-8 top-1/2 -translate-y-1/2 text-zinc-700 group-focus-within:text-[#F59E0B] transition-all text-xl">

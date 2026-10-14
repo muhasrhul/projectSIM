@@ -184,7 +184,7 @@
                 <!-- Menu Buttons -->
                 <div class="space-y-4 stagger-2 fade-in">
                     <!-- Absen Button -->
-                    <a href="/absen" class="btn-modern btn-primary block w-full py-5 px-6 rounded-2xl text-white font-bold text-lg group">
+                    <a href="/absen-gym" class="btn-modern btn-primary block w-full py-5 px-6 rounded-2xl text-white font-bold text-lg group">
                         <div class="flex items-center space-x-4">
                             <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                 <i class="fas fa-user-check text-lg"></i>
