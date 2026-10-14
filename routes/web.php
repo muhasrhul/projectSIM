@@ -46,12 +46,12 @@ Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm']
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.reset.submit');
 
 // 2. PROSES PENDAFTARAN
-Route::get('/daftar', function () {
-    $pakets = \App\Models\Paket::where('is_active', true)->get();
-    return view('daftar', compact('pakets'));
-});
+// Route::get('/daftar', function () {
+//     $pakets = \App\Models\Paket::where('is_active', true)->get();
+//     return view('daftar', compact('pakets'));
+// });
 
-Route::post('/daftar', [FrontMemberController::class, 'store'])->name('member.register');
+// Route::post('/daftar', [FrontMemberController::class, 'store'])->name('member.register');
 
 // 2.1 UPDATE METODE PEMBAYARAN
 Route::post('/update-payment-method', [FrontMemberController::class, 'updatePaymentMethod'])->name('member.updatePaymentMethod');
